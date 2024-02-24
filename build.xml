@@ -1,4 +1,4 @@
-<project name="Hello" default="compile" basedir=".">
+<project name="BellChoir" default="compile" basedir=".">
     <!-- set global properties for this build -->
     <property name="src" location="src"/>
     <property name="dist" location="dist"/>
@@ -13,15 +13,15 @@
     </target>
 
     <target name="jar" depends="init,compile">
-        <jar destfile="${dist}/Hello.jar" basedir="${dist}/classes">
+        <jar destfile="${dist}/${ant.project.name}.jar" basedir="dist/classes">
             <manifest>
-                <attribute name="Main-Class" value="Hello"/>
+                <attribute name="Main-Class" value="${ant.project.name}"/>
             </manifest>
         </jar>
     </target>
 
     <target name="run" depends="jar">
-        <java jar="${dist}/Hello.jar" fork="true"/>
+        <java jar="dist/${ant.project.name}.jar" fork="true"/>
     </target>
 
     <target name="clean">
