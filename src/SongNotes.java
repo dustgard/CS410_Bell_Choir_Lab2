@@ -35,86 +35,13 @@ public class SongNotes {
     }
 
     public HashSet<String> getUniqueNotes() {
-        HashSet<String> unique = new HashSet<>(musicNotes);
+        List<String> members = new ArrayList<>();
+        for (String mus : musicNotes) {
+            String mem = mus.substring(0,1);
+            members.add(mem);
+        }
+        HashSet<String> unique = new HashSet<>(members);
         return unique;
     }
-
-    public int getValueFromNote(String noteAndOctave) {
-        // I got this from here:
-        // http://www.harmony-central.com/MIDI/Doc/table2.html
-        if (!noteAndOctave
-                .matches("^(C|C#|D|D#|E|F|F#|G|G#|A|A#|B)(-1|[0-9])$")) {
-            System.out.println("note " + noteAndOctave
-                    + " is not a muscial note.");
-            System.exit(1);
-        }
-
-        char note = noteAndOctave.charAt(0);
-
-        int noteValue = -100;
-
-        switch (note) {
-            case 'C':
-                noteValue = 0;
-                break;
-            case 'D':
-                noteValue = 2;
-                break;
-            case 'E':
-                noteValue = 4;
-                break;
-            case 'F':
-                noteValue = 5;
-                break;
-            case 'G':
-                noteValue = 7;
-                break;
-            case 'A':
-                noteValue = 9;
-                break;
-            case 'B':
-                noteValue = 11;
-                break;
-            default:
-                System.out.println("This should never be reached.");
-                System.exit(1);
-                break;
-        }
-
-        boolean sharp = noteAndOctave.contains("#");
-
-        // if it's sharp, the note value goes up by one
-        if (sharp) {
-            //System.out.println("There is a sharp");
-            noteValue += 1;
-        }
-
-        //System.out.println("notevalue: " + noteValue);
-
-        int octaveIndex = -100;
-
-        // set the starting index for the octave
-        if (sharp)
-            octaveIndex = 2;
-        else
-            octaveIndex = 1;
-
-        //System.out.println("octaveIndex is " + octaveIndex);
-
-        int octave = -100;
-
-        try {
-            // figure out the octave
-            octave = Integer.parseInt(noteAndOctave.substring(octaveIndex));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        //System.out.println("octave is " + octave);
-
-        return (octave + 1) * 12 + noteValue;
-    }
-
 
 }

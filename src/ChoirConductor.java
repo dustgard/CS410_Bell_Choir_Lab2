@@ -1,28 +1,20 @@
-import javax.sound.midi.MidiChannel;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Synthesizer;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import java.util.*;
 
 public class ChoirConductor implements Runnable {
-
-    private final List<Integer> songNotes;
     private final HashSet<String> unique;
-    private final ArrayList<Thread> choirMembers = new ArrayList<>();
+    private final List<Thread> choirMembers = new ArrayList<>();
     private final List<String> songChords;
-    private int tempo = 800;
-    private String note;
-    private Integer intNote;
-
-    public ChoirConductor(List<Integer> song, List<String> songLetters, HashSet<String> uniqueNotes) {
-        songNotes = song;
+    private final Queue<BellNote> bellNotes = new LinkedList<>();
+    private BellNote bellNote;
+    private Tone tone;
+    private SourceDataLine line;
+    public ChoirConductor(List<String> songLetters, HashSet<String> uniqueNotes) {
         unique = uniqueNotes;
         songChords = songLetters;
-        intNote = songNotes.removeFirst();
-        note = songChords.removeFirst();
-
     }
 
 
@@ -31,61 +23,61 @@ public class ChoirConductor implements Runnable {
             Thread th = new Thread(this, notes);
             System.out.println(th.getName());
             choirMembers.add(th);
-
         }
     }
 
-    public void playSong() {
+    public void playSong() throws LineUnavailableException {
+        final AudioFormat af =
+                new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
+        tone = new Tone(af);
+            line = AudioSystem.getSourceDataLine(af);
+            line.open();
+            line.start();
+
+
+        for(String note : songChords) {
+            NoteLength l = null;
+            switch (note.substring(3)) {
+                case "1":
+                    l = NoteLength.WHOLE;
+                    break;
+                case "2":
+                    l = NoteLength.HALF;
+                    break;
+                case "4":
+                    l = NoteLength.QUARTER;
+                    break;
+                case "8":
+                    l = NoteLength.EIGHTH;
+            }
+            System.out.println(l);
+            bellNotes.add(new BellNote(Note.valueOf(note.substring(0, 2)), l));
+        }
+        bellNote = bellNotes.poll();
         for (Thread choirMember : choirMembers) {
             choirMember.start();
         }
 
     }
 
-    public int stepLength(String note) {
-        int l = Integer.valueOf(note.substring(3));
-        switch (l) {
-            case 4:
-                return 500;
-            case 3:
-                return 1000;
-            case 2:
-                return 1500;
-            case 1:
-                return 2000;
-        }
-        return tempo;
-    }
-
-    public synchronized void playNote() {
-        try {
-            Synthesizer synthesizer = MidiSystem.getSynthesizer();
-            synthesizer.open();
-            MidiChannel[] channel = synthesizer.getChannels();
-            channel[0].noteOn(intNote, 50);
-            try {
-                Thread.sleep(stepLength(note));
-            } catch (InterruptedException e) {
-            } finally {
-                channel[0].noteOff(intNote);
-            }
-        } catch (MidiUnavailableException e) {
-            e.printStackTrace();
-        }
-        if (!songChords.isEmpty()) {
-            intNote = songNotes.removeFirst();
-            note = songChords.removeFirst();
-        }
-    }
-
     public void run() {
-        while (!songChords.isEmpty()) {
-            if (note.equals(Thread.currentThread().getName())) {
-                playNote();
+        while (!bellNotes.isEmpty()) {
+            if (bellNote.note.name().substring(0,1).equals(Thread.currentThread().getName())) {
+                try {
+                    tone.playNote(line,bellNote);
+                } catch (LineUnavailableException e) {
+                    throw new RuntimeException(e);
+                }
+                bellNote = bellNotes.poll();
             }
         }
-        if (note.equals(Thread.currentThread().getName())) {
-            playNote();
+        if(bellNote.note.name().substring(0,1).equals(Thread.currentThread().getName())) {
+            try {
+                tone.playNote(line, bellNote);
+            } catch (LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
         }
+        line.drain();
     }
 }
