@@ -1,14 +1,10 @@
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.*;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 
 public class BellChoir {
-
-    private static final Map<String, Integer> _baseMap = new HashMap<>();
-    private static final Pattern NOTE_FORMAT = Pattern
-            .compile("([A-G])([#b]?)(-?\\d{1,2})");
 
     public static void main(String[] args) {
         JFileChooser song = new JFileChooser("src/Songs");
@@ -18,8 +14,8 @@ public class BellChoir {
         notesPassed.readFile();
         List<String> notes = notesPassed.getMusicNotes();
         List<Integer> notess = new ArrayList();
-        for(String n : notes){
-            String sub = n.substring(0,2);
+        for (String n : notes) {
+            String sub = n.substring(0, 2);
             int f = notesPassed.getValueFromNote(sub);
             System.out.println(f);
             notess.add(f);
@@ -31,6 +27,6 @@ public class BellChoir {
         conductor.playSong();
     }
 
-    }
+}
 
 

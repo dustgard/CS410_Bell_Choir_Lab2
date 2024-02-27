@@ -2,7 +2,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SongNotes {
     private final String songLocation;
@@ -36,8 +35,9 @@ public class SongNotes {
     }
 
     public HashSet<String> getUniqueNotes() {
-        HashSet<String>unique = new HashSet<>(musicNotes);
-        return unique;}
+        HashSet<String> unique = new HashSet<>(musicNotes);
+        return unique;
+    }
 
     public int getValueFromNote(String noteAndOctave) {
         // I got this from here:
@@ -115,7 +115,6 @@ public class SongNotes {
 
         return (octave + 1) * 12 + noteValue;
     }
-
 
 
 }
