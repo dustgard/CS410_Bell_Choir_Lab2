@@ -1,0 +1,43 @@
+Trying to override old definition of task javac
+
+init:
+
+compile:
+
+jar:
+
+songarg:
+
+run:
+     [java] A
+     [java] F
+     [java] G
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] HALF
+     [java] QUARTER
+     [java] QUARTER
+     [java] HALF
+     [java] QUARTER
+     [java] QUARTER
+     [java] HALF
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] QUARTER
+     [java] WHOLE
+
+BUILD SUCCESSFUL
+Total time: 8 seconds
