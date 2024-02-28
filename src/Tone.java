@@ -9,7 +9,7 @@ import javax.sound.sampled.SourceDataLine;
 public class Tone {
 
     // Mary had a little lamb
-    private static final List<BellNote> song = new ArrayList<BellNote>() {{
+    private static final List<BellNote> song = new ArrayList<>() {{
         add(new BellNote(Note.A5, NoteLength.QUARTER));
         add(new BellNote(Note.G4, NoteLength.QUARTER));
         add(new BellNote(Note.F4, NoteLength.QUARTER));
@@ -112,17 +112,44 @@ enum Note {
     REST,
     A4,
     A4S,
+    A4F,
     B4,
+    B4S,
+    B4F,
     C4,
     C4S,
+    C4F,
     D4,
     D4S,
     E4,
+    E4S,
+    E4F,
     F4,
     F4S,
+    F4F,
     G4,
     G4S,
-    A5;
+    G4F,
+    A5,
+    A5S,
+    A5F,
+    B5,
+    B5S,
+    B5F,
+    C5,
+    C5S,
+    C5F,
+    D5,
+    D5S,
+    D5F,
+    E5,
+    E5S,
+    E5F,
+    F5,
+    F5S,
+    F5F,
+    G5,
+    G5S;
 
     public static final int SAMPLE_RATE = 48 * 1024; // ~48KHz
     public static final int MEASURE_LENGTH_SEC = 1;

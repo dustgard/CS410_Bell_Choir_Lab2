@@ -36,8 +36,9 @@ public class ChoirConductor implements Runnable {
 
 
         for(String note : songChords) {
+            String split[] = note.split("\\s+");
             NoteLength l = null;
-            switch (note.substring(3)) {
+            switch (split[1]) {
                 case "1":
                     l = NoteLength.WHOLE;
                     break;
@@ -51,8 +52,9 @@ public class ChoirConductor implements Runnable {
                     l = NoteLength.EIGHTH;
             }
             System.out.println(l);
-            bellNotes.add(new BellNote(Note.valueOf(note.substring(0, 2)), l));
+            bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
         }
+        bellNotes.add(new BellNote(Note.REST,NoteLength.QUARTER));
         bellNote = bellNotes.poll();
         for (Thread choirMember : choirMembers) {
             choirMember.start();
