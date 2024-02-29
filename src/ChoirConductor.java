@@ -21,22 +21,22 @@ public class ChoirConductor {
         songChords = songLetters;
     }
 
-    public void assignNotes() throws InterruptedException {
+    public void assignNotes() throws InterruptedException, LineUnavailableException {
         for (String notes : unique) {
             ChoirMember choirMember = new ChoirMember(notes);
-            choirMember.warmUp();
+
             choirMembers.put(notes, choirMember);
         }
     }
 
-    public void playSong() throws LineUnavailableException {
+    public void playSong() throws LineUnavailableException, InterruptedException {
         final AudioFormat af =
                 new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
         tone = new Tone(af);
         line = AudioSystem.getSourceDataLine(af);
         line.open();
         line.start();
-        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
+//        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
         for (String note : songChords) {
             String split[] = note.split("\\s+");
             NoteLength l = null;
@@ -55,15 +55,28 @@ public class ChoirConductor {
             }
             bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
         }
-
+//            BellNote noteToPlay = bellNotes.poll();
+//            BellNote noteToPlay1 = bellNotes.poll();
+//            ChoirMember notePlayer = choirMembers.get(noteToPlay1.note.name().substring(0,1));
+//            ChoirMember notePlayer2 = choirMembers.get("F");
+//            notePlayer.notesTurn(noteToPlay);
+//            notePlayer2.notesTurn(noteToPlay1);
+//            notePlayer.warmUp();
+//            notePlayer2.warmUp();
+//            System.out.println(notePlayer.isTimeToPlay());
+//            System.out.println(notePlayer2.isTimeToPlay());
         while (!bellNotes.isEmpty()) {
             BellNote noteToPlay = bellNotes.poll();
             if (!noteToPlay.note.name().equals("REST")) {
                 ChoirMember notePlayer = choirMembers.get(noteToPlay.note.name().substring(0, 1));
-                notePlayer.notesTurn(line, noteToPlay);
-
+                notePlayer.notesTurn(noteToPlay);
+                if(!notePlayer.thread.isAlive()){
+                    notePlayer.warmUp();
+                }
+                System.out.println("running loop");
             }
         }
+        line.drain();
         songStillPlaying = false;
     }
 
@@ -72,23 +85,54 @@ public class ChoirConductor {
         private volatile boolean timeToPlay = false;
         private BellNote noteToPlay;
         private Thread lockOwner;
-        ChoirMember(String note) {
+        ChoirMember(String note) throws LineUnavailableException {
             thread = new Thread(this, note);
-            noteAssigned = note;
+
 
         }
 
-        public void notesTurn(SourceDataLine line, BellNote note) throws LineUnavailableException {
+        public void notesTurn(BellNote note) throws LineUnavailableException {
             timeToPlay = true;
             noteToPlay = note;
         }
 
+        public Thread getThread() {
+            return thread;
+        }
+
+        public void setThread(Thread thread) {
+            this.thread = thread;
+        }
+
+        public boolean isTimeToPlay() {
+            return timeToPlay;
+        }
+
+        public void setTimeToPlay(boolean timeToPlay) {
+            this.timeToPlay = timeToPlay;
+        }
+
+        public BellNote getNoteToPlay() {
+            return noteToPlay;
+        }
+
+        public void setNoteToPlay(BellNote noteToPlay) {
+            this.noteToPlay = noteToPlay;
+        }
+
+        public Thread getLockOwner() {
+            return lockOwner;
+        }
+
+        public void setLockOwner(Thread lockOwner) {
+            this.lockOwner = lockOwner;
+        }
 
         public void warmUp() throws InterruptedException {
             thread.start();
         }
 
-        public synchronized void playNote() throws LineUnavailableException {
+        public synchronized void playNote() throws LineUnavailableException, InterruptedException {
             while (!timeToPlay) {
                 try {
                     System.out.println("Waiting");
@@ -96,21 +140,22 @@ public class ChoirConductor {
                 } catch (InterruptedException ignore) {}
             }
             System.out.println("Got to the play note");
-//            tone.playNote(line, noteToPlay);
+            tone.playNote(line, noteToPlay);
+
         }
 
         public synchronized void finishedNote(){
-            timeToPlay = true;
             this.notifyAll();
         }
         public void run() {
             while(songStillPlaying){
                 System.out.println("running");
+                System.out.println(Thread.currentThread().getName());
                 try {
                     playNote();
                     timeToPlay = false;
                     System.out.println("passed PlayNote");
-                } catch (LineUnavailableException e) {
+                } catch (LineUnavailableException | InterruptedException e) {
                 }
                 System.out.println("Stop");
                 finishedNote();
