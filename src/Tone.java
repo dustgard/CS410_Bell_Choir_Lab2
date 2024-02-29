@@ -1,94 +1,9 @@
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
-
-public class Tone {
-
-    // Mary had a little lamb
-    private static final List<BellNote> song = new ArrayList<>() {{
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.F4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.HALF));
-
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.HALF));
-
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.HALF));
-
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.F4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-
-        add(new BellNote(Note.F4, NoteLength.WHOLE));
-    }};
-
-    public static void main(String[] args) throws Exception {
-        final AudioFormat af =
-                new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
-        Tone t = new Tone(af);
-        t.playSong(song);
-    }
-    private Object lock = new Object();
-    private final AudioFormat af;
-    private final SourceDataLine line;
-    Tone(AudioFormat aff) throws LineUnavailableException {
-        this.af = aff;
-        line = AudioSystem.getSourceDataLine(af);
-    }
-
-    void playSong(List<BellNote> song) throws LineUnavailableException {
-        try (final SourceDataLine line = AudioSystem.getSourceDataLine(af)) {
-            line.open();
-            line.start();
-            for(BellNote bn : song) {
-                playNote(line, bn);
-            }
-            line.drain();
-        }
-    }
-
-    public synchronized void playNote(SourceDataLine line, BellNote bn) throws LineUnavailableException {
-        final int ms = Math.min(bn.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
-        final int length = Note.SAMPLE_RATE * ms / 1000;
-        line.write(bn.note.sample(), 0, length);
-        line.write(Note.REST.sample(), 0, 50);
-    }
-}
-
-
-
-class BellNote {
-    final Note note;
-    final NoteLength length;
-
-    BellNote(Note note, NoteLength length) {
-        this.note = note;
-        this.length = length;
-    }
-}
+import java.util.ArrayList;
+import java.util.List;
 
 enum NoteLength {
     WHOLE(1.0f),
@@ -99,13 +14,14 @@ enum NoteLength {
     private final int timeMs;
 
     private NoteLength(float length) {
-        timeMs = (int)(length * Note.MEASURE_LENGTH_SEC * 1000);
+        timeMs = (int) (length * Note.MEASURE_LENGTH_SEC * 1000);
     }
 
     public int timeMs() {
         return timeMs;
     }
 }
+
 
 enum Note {
     // REST Must be the first 'Note'
@@ -173,12 +89,95 @@ enum Note {
             // Create sinusoidal data sample for the desired frequency
             final double sinStep = freq * step_alpha;
             for (int i = 0; i < sinSample.length; i++) {
-                sinSample[i] = (byte)(Math.sin(i * sinStep) * MAX_VOLUME);
+                sinSample[i] = (byte) (Math.sin(i * sinStep) * MAX_VOLUME);
             }
         }
     }
 
     public byte[] sample() {
         return sinSample;
+    }
+}
+
+public class Tone {
+
+    // Mary had a little lamb
+    private static final List<BellNote> song = new ArrayList<>() {{
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.G4, NoteLength.QUARTER));
+        add(new BellNote(Note.F4, NoteLength.QUARTER));
+        add(new BellNote(Note.G4, NoteLength.QUARTER));
+
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.A5, NoteLength.HALF));
+
+        add(new BellNote(Note.G4, NoteLength.QUARTER));
+        add(new BellNote(Note.G4, NoteLength.QUARTER));
+        add(new BellNote(Note.G4, NoteLength.HALF));
+
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.A5, NoteLength.HALF));
+
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.G4, NoteLength.QUARTER));
+        add(new BellNote(Note.F4, NoteLength.QUARTER));
+        add(new BellNote(Note.G4, NoteLength.QUARTER));
+
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+
+        add(new BellNote(Note.G4, NoteLength.QUARTER));
+        add(new BellNote(Note.G4, NoteLength.QUARTER));
+        add(new BellNote(Note.A5, NoteLength.QUARTER));
+        add(new BellNote(Note.G4, NoteLength.QUARTER));
+
+        add(new BellNote(Note.F4, NoteLength.WHOLE));
+    }};
+    private final AudioFormat af;
+    private final SourceDataLine line;
+    private Object lock = new Object();
+
+    Tone(AudioFormat aff) throws LineUnavailableException {
+        this.af = aff;
+        line = AudioSystem.getSourceDataLine(af);
+    }
+
+    public static void main(String[] args) throws Exception {
+        final AudioFormat af =
+                new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
+        Tone t = new Tone(af);
+        t.playSong(song);
+    }
+
+    void playSong(List<BellNote> song) throws LineUnavailableException {
+        try (final SourceDataLine line = AudioSystem.getSourceDataLine(af)) {
+            line.open();
+            line.start();
+            for (BellNote bn : song) {
+                playNote(line, bn);
+            }
+            line.drain();
+        }
+    }
+
+    public synchronized void playNote(SourceDataLine line, BellNote bn) throws LineUnavailableException {
+        final int ms = Math.min(bn.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
+        final int length = Note.SAMPLE_RATE * ms / 1000;
+        line.write(bn.note.sample(), 0, length);
+        line.write(Note.REST.sample(), 0, 50);
+    }
+}
+
+class BellNote {
+    final Note note;
+    final NoteLength length;
+
+    BellNote(Note note, NoteLength length) {
+        this.note = note;
+        this.length = length;
     }
 }

@@ -4,25 +4,28 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import java.util.*;
 
-public class ChoirConductor implements Runnable {
-    private final HashSet<String> unique;
-    private final List<Thread> choirMembers = new ArrayList<>();
-    private final List<String> songChords;
+public class ChoirConductor {
+    private final Map<String, ChoirMember> choirMembers = new HashMap();
     private final Queue<BellNote> bellNotes = new LinkedList<>();
+    public Tone tone;
+    private HashSet<String> unique;
+    private List<String> songChords;
     private BellNote bellNote;
-    private Tone tone;
     private SourceDataLine line;
+    private String noteAssigned;
+    private boolean songStillPlaying = true;
+
+
     public ChoirConductor(List<String> songLetters, HashSet<String> uniqueNotes) {
         unique = uniqueNotes;
         songChords = songLetters;
     }
 
-
-    public void assignNotes() {
+    public void assignNotes() throws InterruptedException {
         for (String notes : unique) {
-            Thread th = new Thread(this, notes);
-            System.out.println(th.getName());
-            choirMembers.add(th);
+            ChoirMember choirMember = new ChoirMember(notes);
+            choirMember.warmUp();
+            choirMembers.put(notes, choirMember);
         }
     }
 
@@ -30,12 +33,11 @@ public class ChoirConductor implements Runnable {
         final AudioFormat af =
                 new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
         tone = new Tone(af);
-            line = AudioSystem.getSourceDataLine(af);
-            line.open();
-            line.start();
-
-
-        for(String note : songChords) {
+        line = AudioSystem.getSourceDataLine(af);
+        line.open();
+        line.start();
+        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
+        for (String note : songChords) {
             String split[] = note.split("\\s+");
             NoteLength l = null;
             switch (split[1]) {
@@ -51,35 +53,96 @@ public class ChoirConductor implements Runnable {
                 case "8":
                     l = NoteLength.EIGHTH;
             }
-            System.out.println(l);
             bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
         }
-        bellNotes.add(new BellNote(Note.REST,NoteLength.QUARTER));
-        bellNote = bellNotes.poll();
-        for (Thread choirMember : choirMembers) {
-            choirMember.start();
-        }
 
+        while (!bellNotes.isEmpty()) {
+            BellNote noteToPlay = bellNotes.poll();
+            if (!noteToPlay.note.name().equals("REST")) {
+                ChoirMember notePlayer = choirMembers.get(noteToPlay.note.name().substring(0, 1));
+                notePlayer.notesTurn(line, noteToPlay);
+
+            }
+        }
+        songStillPlaying = false;
     }
 
-    public void run() {
-        while (!bellNotes.isEmpty()) {
-            if (bellNote.note.name().substring(0,1).equals(Thread.currentThread().getName())) {
+    private class ChoirMember implements Runnable {
+        private Thread thread;
+        private volatile boolean timeToPlay = false;
+        private BellNote noteToPlay;
+        private Thread lockOwner;
+        ChoirMember(String note) {
+            thread = new Thread(this, note);
+            noteAssigned = note;
+
+        }
+
+        public void notesTurn(SourceDataLine line, BellNote note) throws LineUnavailableException {
+            timeToPlay = true;
+            noteToPlay = note;
+        }
+
+
+        public void warmUp() throws InterruptedException {
+            thread.start();
+        }
+
+        public synchronized void playNote() throws LineUnavailableException {
+            while (!timeToPlay) {
                 try {
-                    tone.playNote(line,bellNote);
+                    System.out.println("Waiting");
+                    this.wait();
+                } catch (InterruptedException ignore) {}
+            }
+            System.out.println("Got to the play note");
+//            tone.playNote(line, noteToPlay);
+        }
+
+        public synchronized void finishedNote(){
+            timeToPlay = true;
+            this.notifyAll();
+        }
+        public void run() {
+            while(songStillPlaying){
+                System.out.println("running");
+                try {
+                    playNote();
+                    timeToPlay = false;
+                    System.out.println("passed PlayNote");
                 } catch (LineUnavailableException e) {
-                    throw new RuntimeException(e);
                 }
-                bellNote = bellNotes.poll();
+                System.out.println("Stop");
+                finishedNote();
             }
         }
-        if(bellNote.note.name().substring(0,1).equals(Thread.currentThread().getName())) {
-            try {
-                tone.playNote(line, bellNote);
-            } catch (LineUnavailableException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        line.drain();
     }
 }
+
+
+
+
+
+
+//    public void run() {
+//        while (!bellNotes.isEmpty()) {
+//            if (bellNote.note.name().substring(0,1).equals(Thread.currentThread().getName())) {
+//                try {
+//                    tone.playNote(line,bellNote);
+//                } catch (LineUnavailableException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                bellNote = bellNotes.poll();
+//            }
+//        }
+//        if(bellNote.note.name().substring(0,1).equals(Thread.currentThread().getName())) {
+//            try {
+//                tone.playNote(line, bellNote);
+//            } catch (LineUnavailableException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//        line.drain();
+//    }
+
+

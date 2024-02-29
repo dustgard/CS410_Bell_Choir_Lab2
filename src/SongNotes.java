@@ -37,7 +37,7 @@ public class SongNotes {
     public HashSet<String> getUniqueNotes() {
         List<String> members = new ArrayList<>();
         for (String mus : musicNotes) {
-            String mem = mus.substring(0,1);
+            String mem = mus.substring(0, 1);
             members.add(mem);
         }
         HashSet<String> unique = new HashSet<>(members);
