@@ -1,11 +1,10 @@
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.*;
+import java.awt.event.KeyListener;
+import java.io.InputStream;
 import java.util.*;
 
 
-public class ChoirConductor implements Runnable {
+public class ChoirConductor implements Runnable, LineListener {
     private final Map<String, ChoirMember> choirMembers = new HashMap();
     private final Queue<BellNote> bellNotes = new LinkedList<>();
     private final Tone tone;
@@ -13,6 +12,7 @@ public class ChoirConductor implements Runnable {
     private final List<String> songChords;
     private final SourceDataLine line;
     private final Thread conductor;
+    private javax.sound.sampled.LineListener lineListener;
     public boolean songStillPlaying = true;
 
 
@@ -23,9 +23,17 @@ public class ChoirConductor implements Runnable {
                 new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
         tone = new Tone(af);
         line = AudioSystem.getSourceDataLine(af);
+        line.addLineListener(this);
         line.open();
         line.start();
         conductor = new Thread(this, "conductor");
+    }
+
+    @Override
+    public void update(LineEvent event) {
+    if(event.getLine() == LineEvent.Type.START){
+        System.out.println("Play stopped*****************************************************************************");
+    }
     }
 
     public void assignNotes() {
@@ -89,11 +97,14 @@ public class ChoirConductor implements Runnable {
         }
     }
 
+
+
     public class ChoirMember implements Runnable {
         private final Object memberLock = new Object();
         private final Thread thread;
         private BellNote bellNote;
         private boolean playing = true;
+
 
 
         ChoirMember(String note) {
@@ -104,6 +115,10 @@ public class ChoirConductor implements Runnable {
 
         public void warmUp() {
             thread.start();
+        }
+
+        public boolean finishedNote(){
+            return true;
         }
 
         public void play() throws LineUnavailableException {
@@ -127,12 +142,12 @@ public class ChoirConductor implements Runnable {
 
         public void notesTurn(BellNote note) throws LineUnavailableException {
             bellNote = note;
+            playing = false;
         }
 
         public void setPlayed() {
             System.out.println("setPlayed");
             synchronized (memberLock) {
-                playing = false;
                 memberLock.notifyAll();
             }
         }
