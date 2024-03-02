@@ -10,7 +10,7 @@
         <mkdir dir="${dist}/classes"/>
     </target>
     <target name="compile" depends="init">
-        <javac debug = "true" srcdir="${src}" destdir="${dist}/classes"/>
+        <javac debug="true" srcdir="${src}" destdir="${dist}/classes"/>
     </target>
     <target name="jar" depends="init,compile">
         <jar destfile="${dist}/${ant.project.name}.jar" basedir="${dist}/classes">

@@ -164,7 +164,7 @@ public class Tone {
         }
     }
 
-    public synchronized void playNote(SourceDataLine line, BellNote bn){
+    public synchronized void playNote(SourceDataLine line, BellNote bn) {
         final int ms = Math.min(bn.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
         final int length = Note.SAMPLE_RATE * ms / 1000;
         line.write(bn.note.sample(), 0, length);
