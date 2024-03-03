@@ -25,47 +25,63 @@ enum NoteLength {
 
 enum Note {
     // REST Must be the first 'Note'
+
     REST,
     A4,
     A4S,
-    A4F,
     B4,
-    B4S,
-    B4F,
     C4,
     C4S,
-    C4F,
     D4,
     D4S,
     E4,
-    E4S,
-    E4F,
     F4,
     F4S,
-    F4F,
     G4,
     G4S,
-    G4F,
-    A5,
-    A5S,
-    A5F,
-    B5,
-    B5S,
-    B5F,
-    C5,
-    C5S,
-    C5F,
-    D5,
-    D5S,
-    D5F,
-    E5,
-    E5S,
-    E5F,
-    F5,
-    F5S,
-    F5F,
-    G5,
-    G5S;
+    A5;
+
+//    REST,
+//    A4,
+//    A4S,
+//    A4F,
+//    B4,
+//    B4S,
+//    B4F,
+//    C4,
+//    C4S,
+//    C4F,
+//    D4,
+//    D4S,
+//    E4,
+//    E4S,
+//    E4F,
+//    F4,
+//    F4S,
+//    F4F,
+//    G4,
+//    G4S,
+//    G4F,
+//    A5,
+//    A5S,
+//    A5F,
+//    B5,
+//    B5S,
+//    B5F,
+//    C5,
+//    C5S,
+//    C5F,
+//    D5,
+//    D5S,
+//    D5F,
+//    E5,
+//    E5S,
+//    E5F,
+//    F5,
+//    F5S,
+//    F5F,
+//    G5,
+//    G5S;
 
     public static final int SAMPLE_RATE = 48 * 1024; // ~48KHz
     public static final int MEASURE_LENGTH_SEC = 1;
@@ -75,6 +91,7 @@ enum Note {
 
     private final double FREQUENCY_A_HZ = 440.0d;
     private final double MAX_VOLUME = 127.0d;
+
 
     private final byte[] sinSample = new byte[MEASURE_LENGTH_SEC * SAMPLE_RATE];
 
@@ -139,7 +156,10 @@ public class Tone {
     }};
     private final AudioFormat af;
     private final SourceDataLine line;
+    private final Object playLock = new Object();
+    public List<BellNote> testList = new ArrayList<>();
     private Object lock = new Object();
+    private boolean notePlaying = false;
 
     Tone(AudioFormat aff) throws LineUnavailableException {
         this.af = aff;
@@ -165,12 +185,20 @@ public class Tone {
     }
 
     public synchronized void playNote(SourceDataLine line, BellNote bn) {
+        testList.add(bn);
+        notePlaying = true;
         final int ms = Math.min(bn.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
         final int length = Note.SAMPLE_RATE * ms / 1000;
         line.write(bn.note.sample(), 0, length);
         line.write(Note.REST.sample(), 0, 50);
+
+    }
+
+    public List<BellNote> testReturn() {
+        return testList;
     }
 }
+
 
 class BellNote {
     final Note note;
