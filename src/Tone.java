@@ -13,7 +13,7 @@ enum NoteLength {
 
     private final int timeMs;
 
-    private NoteLength(float length) {
+    NoteLength(float length) {
         timeMs = (int) (length * Note.MEASURE_LENGTH_SEC * 1000);
     }
 
@@ -184,7 +184,7 @@ public class Tone {
         }
     }
 
-    public synchronized void playNote(SourceDataLine line, BellNote bn) {
+    public void playNote(SourceDataLine line, BellNote bn) {
         testList.add(bn);
         notePlaying = true;
         final int ms = Math.min(bn.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);

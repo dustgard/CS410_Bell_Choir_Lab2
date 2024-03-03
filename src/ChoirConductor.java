@@ -16,7 +16,6 @@ public class ChoirConductor implements Runnable {
     private final SourceDataLine line;
     private final Thread conductor;
     public boolean songStillPlaying = true;
-    public boolean stillPlayingNote = false;
     public Lock conductorLock = new ReentrantLock();
 
 
@@ -73,7 +72,7 @@ public class ChoirConductor implements Runnable {
                 if (!bellNotes.isEmpty()) {
                     BellNote noteToPlay = bellNotes.poll();
                     ChoirMember notePlayer = choirMembers.get(noteToPlay.note.name().substring(0, 1));
-                    if(notePlayer != null) {
+                    if (notePlayer != null) {
                         notePlayer.notesTurn(noteToPlay);
                         while (notePlayer.isMemberPlayingNote()) {
                             Thread.sleep(1);
@@ -157,26 +156,3 @@ public class ChoirConductor implements Runnable {
 
     }
 }
-
-
-//    public void run() {
-//        while (!bellNotes.isEmpty()) {
-//            if (bellNote.note.name().substring(0,1).equals(Thread.currentThread().getName())) {
-//                try {
-//                    tone.playNote(line,bellNote);
-//                } catch (LineUnavailableException e) {
-//                    throw new RuntimeException(e);
-//                }
-//                bellNote = bellNotes.poll();
-//            }
-//        }
-//        if(bellNote.note.name().substring(0,1).equals(Thread.currentThread().getName())) {
-//            try {
-//                tone.playNote(line, bellNote);
-//            } catch (LineUnavailableException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//        line.drain();
-//    }
-
