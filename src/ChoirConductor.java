@@ -65,9 +65,6 @@ public class ChoirConductor implements Runnable {
     }
 
     private void memberPlayNote() throws LineUnavailableException, InterruptedException {
-        conductorLock.lock();
-        try {
-
             if (songStillPlaying) {
                 if (!bellNotes.isEmpty()) {
                     BellNote noteToPlay = bellNotes.poll();
@@ -75,7 +72,7 @@ public class ChoirConductor implements Runnable {
                     if (notePlayer != null) {
                         notePlayer.notesTurn(noteToPlay);
                         while (notePlayer.isMemberPlayingNote()) {
-                            Thread.sleep(1);
+                            Thread.sleep(noteToPlay.length.timeMs()-1);
                         }
                     }
 
@@ -84,11 +81,6 @@ public class ChoirConductor implements Runnable {
                     line.drain();
                 }
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            conductorLock.unlock();
-        }
     }
 
     @Override
@@ -156,3 +148,4 @@ public class ChoirConductor implements Runnable {
 
     }
 }
+
