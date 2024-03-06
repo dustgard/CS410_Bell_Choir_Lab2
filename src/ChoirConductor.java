@@ -3,8 +3,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 public class ChoirConductor implements Runnable {
@@ -16,8 +14,7 @@ public class ChoirConductor implements Runnable {
     private final SourceDataLine line;
     private final Thread conductor;
     public boolean songStillPlaying = true;
-    public Lock conductorLock = new ReentrantLock();
-
+    private  Object conductorSignal = new Object();
 
     public ChoirConductor(List<String> songLetters, HashSet<String> uniqueNotes) throws LineUnavailableException {
         unique = uniqueNotes;
@@ -29,6 +26,17 @@ public class ChoirConductor implements Runnable {
         line.open();
         line.start();
         conductor = new Thread(this, "conductor");
+    }
+
+    public void setWaitConductorSignal() throws InterruptedException {
+        synchronized (conductorSignal){
+            try{
+                wait();
+            } catch (InterruptedException e) {
+
+            }
+        }
+
     }
 
     public void assignNotes() {
@@ -71,10 +79,8 @@ public class ChoirConductor implements Runnable {
                     ChoirMember notePlayer = choirMembers.get(noteToPlay.note.name().substring(0, 1));
                     if (notePlayer != null) {
                         notePlayer.notesTurn(noteToPlay);
-                        while (notePlayer.isMemberPlayingNote()) {
-                            Thread.sleep(noteToPlay.length.timeMs()-1);
-                        }
                     }
+                    System.out.println(Thread.currentThread().getName());
 
                 } else {
                     songStillPlaying = false;
@@ -88,6 +94,8 @@ public class ChoirConductor implements Runnable {
         while (songStillPlaying) {
             try {
                 memberPlayNote();
+                setWaitConductorSignal();
+
             } catch (LineUnavailableException e) {
                 throw new RuntimeException(e);
             } catch (InterruptedException e) {
@@ -100,9 +108,9 @@ public class ChoirConductor implements Runnable {
     public class ChoirMember implements Runnable {
         private final Thread thread;
         public boolean memberPlayingNote = true;
-        private boolean memberLock = false;
         private boolean playLock = false;
         private BellNote bellNote;
+        private Object memberLock = new Object();
 
 
         ChoirMember(String note) {
@@ -115,9 +123,8 @@ public class ChoirConductor implements Runnable {
             thread.start();
         }
 
-        public synchronized void play() throws LineUnavailableException {
+        public synchronized void play() throws LineUnavailableException, InterruptedException {
             if (playLock) {
-                System.out.println(Thread.currentThread() + " " + bellNote.note.name());
                 tone.playNote(line, bellNote);
                 memberPlayingNote = false;
                 playLock = false;
@@ -131,13 +138,11 @@ public class ChoirConductor implements Runnable {
             playLock = true;
         }
 
-
         public void run() {
             while (songStillPlaying) {
                 try {
                     play();
-                } catch (LineUnavailableException e) {
-                    throw new RuntimeException(e);
+                } catch (LineUnavailableException | InterruptedException e) {
                 }
             }
         }
