@@ -185,8 +185,6 @@ public class Tone {
     }
 
     public void playNote(SourceDataLine line, BellNote bn) {
-        testList.add(bn);
-        notePlaying = true;
         final int ms = Math.min(bn.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
         final int length = Note.SAMPLE_RATE * ms / 1000;
         line.write(bn.note.sample(), 0, length);

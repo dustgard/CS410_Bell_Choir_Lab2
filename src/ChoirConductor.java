@@ -37,7 +37,7 @@ public class ChoirConductor implements Runnable {
     }
 
     public void playSong() {
-        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
+//        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
         for (String note : songChords) {
             String[] split = note.split("\\s+");
             NoteLength l = null;
@@ -66,13 +66,11 @@ public class ChoirConductor implements Runnable {
         if (songStillPlaying) {
             if (!bellNotes.isEmpty()) {
                     BellNote noteToPlay = bellNotes.poll();
-                    System.out.println(noteToPlay.note.name());
                     ChoirMember notePlayer = choirMembers.get(noteToPlay.note.name().substring(0, 1));
                     if (notePlayer != null) {
-                        System.out.println("Sending Player Note");
+                        System.out.println(Thread.currentThread().getName() + ": Sending Member " + notePlayer.thread.getName() + " Note [" + noteToPlay.note.name() + "]");
                         notePlayer.notesTurn(noteToPlay);
                     }
-                    System.out.println(Thread.currentThread().getName());
                 }
 
             } else {
@@ -87,14 +85,14 @@ public class ChoirConductor implements Runnable {
             do {
                 while (!conductorSignal) {
                     try {
-                        System.out.println("Conductor Waiting");
+                        System.out.println("Member " + Thread.currentThread().getName() + " is Waiting");
+
                         wait();
                     } catch (InterruptedException e) {
                     }
                 }
                     try {
                         conductorSignal = false;
-                        System.out.println("Conductor Playing Note");
                         memberPlayNote();
                         notify();
                     } catch (LineUnavailableException e) {
@@ -119,9 +117,9 @@ public class ChoirConductor implements Runnable {
 
         public synchronized void play() throws LineUnavailableException, InterruptedException {
             if (memberPlayingNote) {
+                System.out.println("Member " + Thread.currentThread().getName() +  " is Playing note [" + bellNote.note.name() + "]");
                 tone.playNote(line, bellNote);
                 memberPlayingNote = false;
-
             }
         }
 
@@ -129,11 +127,9 @@ public class ChoirConductor implements Runnable {
             synchronized (this) {
                 memberPlayingNote = true;
                 bellNote = note;
-                System.out.println("Members turn");
                 notify();
                 while (memberPlayingNote) {
                     try {
-                        System.out.println("Members turn waiting");
                         wait();
                     } catch (InterruptedException ignored) {
                     }
@@ -146,13 +142,14 @@ public class ChoirConductor implements Runnable {
                 do {
                     while (!memberPlayingNote) {
                         try {
-                            System.out.println("Member Waiting");
+                            System.out.println("Member " + Thread.currentThread().getName() +  " is Waiting");
+                            conductorSignal = true;
                             wait();
                         } catch (InterruptedException e) {
                         }
                     }
                     try {
-                        System.out.println("Member trying to play");
+                        System.out.println("Member " + Thread.currentThread().getName() +  " is trying to play note [" + bellNote.note.name() + "]");
                         play();
                         notify();
                     } catch (LineUnavailableException e) {
