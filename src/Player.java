@@ -1,10 +1,18 @@
 public class Player implements Runnable {
     private static final int NUM_TURNS = 5;
-
-    private enum State {
-       A,B,C;
-    }
+    private final State myJob;
+    private final Thread t;
     State state;
+    private volatile boolean running;
+    private boolean myTurn;
+    private int turnCount;
+
+    Player(State myJob) {
+        this.myJob = myJob;
+        turnCount = 1;
+        t = new Thread(this, myJob.name());
+        t.start();
+    }
 
     public static void main(String[] args) {
         // Create all the players, and give each a turn
@@ -25,19 +33,6 @@ public class Player implements Runnable {
         }
     }
 
-    private final State myJob;
-    private final Thread t;
-    private volatile boolean running;
-    private boolean myTurn;
-    private int turnCount;
-
-    Player(State myJob) {
-        this.myJob = myJob;
-        turnCount = 1;
-        t = new Thread(this, myJob.name());
-        t.start();
-    }
-
     public void stopPlayer() {
         running = false;
     }
@@ -52,7 +47,8 @@ public class Player implements Runnable {
             while (myTurn) {
                 try {
                     wait();
-                } catch (InterruptedException ignored) {}
+                } catch (InterruptedException ignored) {
+                }
             }
         }
     }
@@ -65,7 +61,8 @@ public class Player implements Runnable {
                 while (!myTurn) {
                     try {
                         wait();
-                    } catch (InterruptedException ignored) {}
+                    } catch (InterruptedException ignored) {
+                    }
                 }
 
                 // My turn!
@@ -81,5 +78,9 @@ public class Player implements Runnable {
 
     private void doTurn() {
         System.out.println("Player[" + myJob.name() + "] taking turn " + turnCount);
+    }
+
+    private enum State {
+        A, B, C;
     }
 }
