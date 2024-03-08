@@ -53,8 +53,7 @@ public class ChoirMember implements Runnable {
                     System.out.println("Member " + Thread.currentThread().getName() + " is trying to play note [" + bellNote.note.name() + "]");
                     play();
                     notify();
-                } catch (LineUnavailableException e) {
-                } catch (InterruptedException e) {
+                }  catch (InterruptedException | LineUnavailableException e) {
                 }
             } while (ChoirConductor.songStillPlaying);
             System.out.println("Member Not");
