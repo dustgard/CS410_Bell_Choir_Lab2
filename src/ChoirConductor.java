@@ -37,7 +37,7 @@ public class ChoirConductor implements Runnable {
     }
 
     public void playSong() {
-//        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
+        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
         for (String note : songChords) {
             String[] split = note.split("\\s+");
             NoteLength l = null;
@@ -66,6 +66,11 @@ public class ChoirConductor implements Runnable {
         if (songStillPlaying) {
             if (!bellNotes.isEmpty()) {
                 BellNote noteToPlay = bellNotes.poll();
+                if(noteToPlay.note.name().equals("REST")){
+                    ChoirMember notePlayer = choirMembers.get("A");
+                    System.out.println(Thread.currentThread().getName() + ": Sending Member " + notePlayer.thread.getName() + " Note [" + noteToPlay.note.name() + "]");
+                    notePlayer.notesTurn(noteToPlay);
+                }
                 ChoirMember notePlayer = choirMembers.get(noteToPlay.note.name().substring(0, 1));
                 if (notePlayer != null) {
                     System.out.println(Thread.currentThread().getName() + ": Sending Member " + notePlayer.thread.getName() + " Note [" + noteToPlay.note.name() + "]");
