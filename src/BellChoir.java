@@ -2,11 +2,9 @@ import javax.sound.sampled.LineUnavailableException;
 import java.util.HashSet;
 import java.util.List;
 
-
 public class BellChoir {
 
     public static void main(String[] args) throws LineUnavailableException, InterruptedException {
-
 //
         SongNotes notesPassed = new SongNotes(args[0]);
         notesPassed.readFile();

@@ -17,12 +17,10 @@ public class Player implements Runnable {
     public static void main(String[] args) {
         // Create all the players, and give each a turn
         final int numStates = State.values().length;
-
         Player[] players = new Player[numStates];
         for (State s : State.values()) {
             players[s.ordinal()] = new Player(s);
         }
-
         for (int i = 0; i < NUM_TURNS; i++) {
             for (Player p : players) {
                 p.giveTurn();
@@ -64,11 +62,9 @@ public class Player implements Runnable {
                     } catch (InterruptedException ignored) {
                     }
                 }
-
                 // My turn!
                 doTurn();
                 turnCount++;
-
                 // Done, complete turn and wakeup the waiting process
                 myTurn = false;
                 notify();

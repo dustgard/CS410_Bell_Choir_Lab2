@@ -43,5 +43,4 @@ public class SongNotes {
         HashSet<String> unique = new HashSet<>(members);
         return unique;
     }
-
 }

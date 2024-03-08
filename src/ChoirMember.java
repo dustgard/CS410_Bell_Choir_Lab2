@@ -3,17 +3,15 @@ import javax.sound.sampled.SourceDataLine;
 
 public class ChoirMember implements Runnable {
     public final Thread thread;
+    private final boolean timeToPlay = true;
     public boolean memberPlayingNote = false;
     private BellNote bellNote;
-    private boolean timeToPlay = true;
     private Tone tone;
     private SourceDataLine line;
-
 
     ChoirMember(String note) {
         thread = new Thread(this, note);
         thread.start();
-
     }
 
     public synchronized void play() throws LineUnavailableException, InterruptedException {
@@ -58,7 +56,6 @@ public class ChoirMember implements Runnable {
                 } catch (LineUnavailableException e) {
                 } catch (InterruptedException e) {
                 }
-
             } while (ChoirConductor.songStillPlaying);
             System.out.println("Member Not");
         }

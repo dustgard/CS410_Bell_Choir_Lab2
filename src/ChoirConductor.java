@@ -4,8 +4,9 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import java.util.*;
 
-
 public class ChoirConductor implements Runnable {
+    public static boolean songStillPlaying = true;
+    public static boolean conductorSignal;
     private final Map<String, ChoirMember> choirMembers = new HashMap();
     private final Queue<BellNote> bellNotes = new LinkedList<>();
     private final Tone tone;
@@ -13,8 +14,6 @@ public class ChoirConductor implements Runnable {
     private final List<String> songChords;
     private final SourceDataLine line;
     private final Thread conductor;
-    public static boolean songStillPlaying = true;
-    public static boolean conductorSignal;
 
     public ChoirConductor(List<String> songLetters, HashSet<String> uniqueNotes) throws LineUnavailableException {
         unique = uniqueNotes;
@@ -57,7 +56,6 @@ public class ChoirConductor implements Runnable {
             }
             bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
         }
-
         System.out.println("Starting conductor");
         conductor.start();
     }
@@ -106,65 +104,5 @@ public class ChoirConductor implements Runnable {
             System.out.println("Song Not playing");
         }
     }
-
-//    public class ChoirMember implements Runnable {
-//        private final Thread thread;
-//        public boolean memberPlayingNote = false;
-//        private BellNote bellNote;
-//        private boolean timeToPlay = true;
-//
-//
-//        ChoirMember(String note) {
-//            thread = new Thread(this, note);
-//            thread.start();
-//
-//        }
-//
-//        public synchronized void play() throws LineUnavailableException, InterruptedException {
-//            if (memberPlayingNote) {
-//                System.out.println("Member " + Thread.currentThread().getName() + " is Playing note [" + bellNote.note.name() + "]");
-//                tone.playNote(line, bellNote);
-//                memberPlayingNote = false;
-//            }
-//        }
-//
-//        public synchronized void notesTurn(BellNote note) {
-//            synchronized (this) {
-//                memberPlayingNote = true;
-//                bellNote = note;
-//                notify();
-//                while (memberPlayingNote) {
-//                    try {
-//                        wait();
-//                    } catch (InterruptedException ignored) {
-//                    }
-//                }
-//            }
-//        }
-//
-//        public void run() {
-//            synchronized (this) {
-//                do {
-//                    while (!memberPlayingNote) {
-//                        try {
-//                            System.out.println("Member " + Thread.currentThread().getName() + " is Waiting");
-//                            conductorSignal = true;
-//                            wait();
-//                        } catch (InterruptedException e) {
-//                        }
-//                    }
-//                    try {
-//                        System.out.println("Member " + Thread.currentThread().getName() + " is trying to play note [" + bellNote.note.name() + "]");
-//                        play();
-//                        notify();
-//                    } catch (LineUnavailableException e) {
-//                    } catch (InterruptedException e) {
-//                    }
-//
-//                } while (songStillPlaying);
-//                System.out.println("Member Not");
-//            }
-//        }
-//    }
 }
 
