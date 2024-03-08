@@ -13,8 +13,8 @@ public class ChoirConductor implements Runnable {
     private final List<String> songChords;
     private final SourceDataLine line;
     private final Thread conductor;
-    public boolean songStillPlaying = true;
-    private boolean conductorSignal;
+    public static boolean songStillPlaying = true;
+    public static boolean conductorSignal;
 
     public ChoirConductor(List<String> songLetters, HashSet<String> uniqueNotes) throws LineUnavailableException {
         unique = uniqueNotes;
@@ -66,15 +66,15 @@ public class ChoirConductor implements Runnable {
         if (songStillPlaying) {
             if (!bellNotes.isEmpty()) {
                 BellNote noteToPlay = bellNotes.poll();
-                if(noteToPlay.note.name().equals("REST")){
+                if (noteToPlay.note.name().equals("REST")) {
                     ChoirMember notePlayer = choirMembers.get("A");
                     System.out.println(Thread.currentThread().getName() + ": Sending Member " + notePlayer.thread.getName() + " Note [" + noteToPlay.note.name() + "]");
-                    notePlayer.notesTurn(noteToPlay);
+                    notePlayer.notesTurn(noteToPlay, tone, line);
                 }
                 ChoirMember notePlayer = choirMembers.get(noteToPlay.note.name().substring(0, 1));
                 if (notePlayer != null) {
                     System.out.println(Thread.currentThread().getName() + ": Sending Member " + notePlayer.thread.getName() + " Note [" + noteToPlay.note.name() + "]");
-                    notePlayer.notesTurn(noteToPlay);
+                    notePlayer.notesTurn(noteToPlay, tone, line);
                 }
             } else {
                 System.out.println("Song Finished");
@@ -103,65 +103,68 @@ public class ChoirConductor implements Runnable {
                 } catch (InterruptedException e) {
                 }
             } while (songStillPlaying);
+            System.out.println("Song Not playing");
         }
     }
 
-public class ChoirMember implements Runnable {
-    private final Thread thread;
-    public boolean memberPlayingNote = false;
-    private BellNote bellNote;
-
-
-    ChoirMember(String note) {
-        thread = new Thread(this, note);
-        thread.start();
-
-    }
-
-    public synchronized void play() throws LineUnavailableException, InterruptedException {
-        if (memberPlayingNote) {
-            System.out.println("Member " + Thread.currentThread().getName() + " is Playing note [" + bellNote.note.name() + "]");
-            tone.playNote(line, bellNote);
-            memberPlayingNote = false;
-        }
-    }
-
-    public synchronized void notesTurn(BellNote note) {
-        synchronized (this) {
-            memberPlayingNote = true;
-            bellNote = note;
-            notify();
-            while (memberPlayingNote) {
-                try {
-                    wait();
-                } catch (InterruptedException ignored) {
-                }
-            }
-        }
-    }
-
-    public void run() {
-        synchronized (this) {
-            do {
-                while (!memberPlayingNote) {
-                    try {
-                        System.out.println("Member " + Thread.currentThread().getName() + " is Waiting");
-                        conductorSignal = true;
-                        wait();
-                    } catch (InterruptedException e) {
-                    }
-                }
-                try {
-                    System.out.println("Member " + Thread.currentThread().getName() + " is trying to play note [" + bellNote.note.name() + "]");
-                    play();
-                    notify();
-                } catch (LineUnavailableException e) {
-                } catch (InterruptedException e) {
-                }
-
-            } while (songStillPlaying);
-        }
-    }
-}
+//    public class ChoirMember implements Runnable {
+//        private final Thread thread;
+//        public boolean memberPlayingNote = false;
+//        private BellNote bellNote;
+//        private boolean timeToPlay = true;
+//
+//
+//        ChoirMember(String note) {
+//            thread = new Thread(this, note);
+//            thread.start();
+//
+//        }
+//
+//        public synchronized void play() throws LineUnavailableException, InterruptedException {
+//            if (memberPlayingNote) {
+//                System.out.println("Member " + Thread.currentThread().getName() + " is Playing note [" + bellNote.note.name() + "]");
+//                tone.playNote(line, bellNote);
+//                memberPlayingNote = false;
+//            }
+//        }
+//
+//        public synchronized void notesTurn(BellNote note) {
+//            synchronized (this) {
+//                memberPlayingNote = true;
+//                bellNote = note;
+//                notify();
+//                while (memberPlayingNote) {
+//                    try {
+//                        wait();
+//                    } catch (InterruptedException ignored) {
+//                    }
+//                }
+//            }
+//        }
+//
+//        public void run() {
+//            synchronized (this) {
+//                do {
+//                    while (!memberPlayingNote) {
+//                        try {
+//                            System.out.println("Member " + Thread.currentThread().getName() + " is Waiting");
+//                            conductorSignal = true;
+//                            wait();
+//                        } catch (InterruptedException e) {
+//                        }
+//                    }
+//                    try {
+//                        System.out.println("Member " + Thread.currentThread().getName() + " is trying to play note [" + bellNote.note.name() + "]");
+//                        play();
+//                        notify();
+//                    } catch (LineUnavailableException e) {
+//                    } catch (InterruptedException e) {
+//                    }
+//
+//                } while (songStillPlaying);
+//                System.out.println("Member Not");
+//            }
+//        }
+//    }
 }
 
