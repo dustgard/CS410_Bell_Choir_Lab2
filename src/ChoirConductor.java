@@ -75,9 +75,13 @@ public class ChoirConductor implements Runnable {
                     notePlayer.notesTurn(noteToPlay, tone, line);
                 }
             } else {
-                System.out.println("Song Finished");
                 songStillPlaying = false;
                 line.drain();
+                for(ChoirMember member : choirMembers.values()){
+                    member.memberStop();
+                }
+                System.out.println("Song Finished");
+                line.close();
             }
         }
     }
@@ -101,7 +105,8 @@ public class ChoirConductor implements Runnable {
                 } catch (InterruptedException e) {
                 }
             } while (songStillPlaying);
-            System.out.println("Song Not playing");
+            System.out.println("Conductor took a bow");
+
         }
     }
 }

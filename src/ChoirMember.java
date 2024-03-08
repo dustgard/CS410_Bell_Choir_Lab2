@@ -3,7 +3,7 @@ import javax.sound.sampled.SourceDataLine;
 
 public class ChoirMember implements Runnable {
     public final Thread thread;
-    private final boolean timeToPlay = true;
+    private boolean timeToPlay = true;
     public boolean memberPlayingNote = false;
     private BellNote bellNote;
     private Tone tone;
@@ -27,6 +27,7 @@ public class ChoirMember implements Runnable {
             this.tone = tone;
             this.line = line;
             memberPlayingNote = true;
+            timeToPlay = true;
             bellNote = note;
             notify();
             while (memberPlayingNote) {
@@ -38,10 +39,23 @@ public class ChoirMember implements Runnable {
         }
     }
 
+    public synchronized void memberStop() {
+        synchronized (this) {
+            timeToPlay = false;
+            notify();
+            while (timeToPlay) {
+                try {
+                    wait();
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+    }
+
     public void run() {
         synchronized (this) {
             do {
-                while (!memberPlayingNote) {
+                while (!memberPlayingNote && timeToPlay) {
                     try {
                         System.out.println("Member " + Thread.currentThread().getName() + " is Waiting");
                         ChoirConductor.conductorSignal = true;
@@ -50,13 +64,13 @@ public class ChoirMember implements Runnable {
                     }
                 }
                 try {
-                    System.out.println("Member " + Thread.currentThread().getName() + " is trying to play note [" + bellNote.note.name() + "]");
                     play();
                     notify();
                 }  catch (InterruptedException | LineUnavailableException e) {
                 }
-            } while (ChoirConductor.songStillPlaying);
-            System.out.println("Member Not");
+            } while (timeToPlay);
+            System.out.println("Member " + Thread.currentThread().getName() + " is finished playing song");
+
         }
     }
 }
