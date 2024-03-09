@@ -21,8 +21,12 @@
     </target>
     <target name="songarg" unless="song">
         <property name="song" value="${basedir}"/>
+        <property name="song2" value="${basedir}"/>
     </target>
-    <target name="run" depends="jar,songarg">
+    <target name="songarg2" unless="song2">
+        <property name="song2" value="${basedir}"/>
+    </target>
+    <target name="run" depends="jar,songarg, songarg2">
         <java jar="${dist}/${ant.project.name}.jar" fork="true">
             <arg value="${song}"/>
         </java>

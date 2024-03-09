@@ -8,7 +8,9 @@ public class ChoirConductor implements Runnable {
     public static boolean songStillPlaying = true;
     public static boolean conductorSignal;
     private final Map<String, ChoirMember> choirMembers = new HashMap();
+    private final Map<String, ChoirMember> choirMembers2 = new HashMap();
     private final Queue<BellNote> bellNotes = new LinkedList<>();
+    private final Queue<BellNote> bellNotes2 = new LinkedList<>();
     private final Tone tone;
     private final HashSet<String> unique;
     private final List<String> songChords;
