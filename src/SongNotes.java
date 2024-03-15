@@ -16,16 +16,13 @@ public class SongNotes {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(songFile));
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-
+        } catch (FileNotFoundException ignore) {
         }
         while (true) {
-            String note;
+            String note = "";
             try {
                 if ((note = reader.readLine()) == null) break;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (IOException ignore) {
             }
             musicNotes.add(note);
         }
