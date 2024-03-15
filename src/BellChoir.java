@@ -4,8 +4,7 @@ import java.util.List;
 
 public class BellChoir {
 
-    public static void main(String[] args) throws LineUnavailableException, InterruptedException {
-//
+    public static void main(String[] args) throws LineUnavailableException {
         SongNotes notesPassed = new SongNotes(args[0]);
         notesPassed.readFile();
         List<String> notes = notesPassed.getMusicNotes();

@@ -77,7 +77,7 @@ public class ChoirConductor implements Runnable {
             } else {
                 songStillPlaying = false;
                 line.drain();
-                for(ChoirMember member : choirMembers.values()){
+                for (ChoirMember member : choirMembers.values()) {
                     member.memberStop();
                 }
                 System.out.println("Song Finished");

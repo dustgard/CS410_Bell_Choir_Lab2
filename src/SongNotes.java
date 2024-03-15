@@ -17,7 +17,8 @@ public class SongNotes {
         try {
             reader = new BufferedReader(new FileReader(songFile));
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            System.out.println("File not found");
+
         }
         while (true) {
             String note;
