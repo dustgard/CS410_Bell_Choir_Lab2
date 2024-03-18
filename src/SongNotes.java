@@ -11,12 +11,14 @@ public class SongNotes {
         this.songLocation = songLocation;
     }
 
-    public void readFile() {
+    public void readFile() throws IOException {
         File songFile = new File(songLocation);
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(songFile));
         } catch (FileNotFoundException ignore) {
+            //Handle the exception
+
         }
         while (true) {
             String note = "";
@@ -26,8 +28,12 @@ public class SongNotes {
             }
             musicNotes.add(note);
         }
+        // Use try with resources
+        reader.close();
     }
 
+    // Take String to notes first
+    // Tic has validation
     public List<String> getMusicNotes() {
         return musicNotes;
     }
@@ -39,6 +45,7 @@ public class SongNotes {
             members.add(mem);
         }
         HashSet<String> unique = new HashSet<>(members);
+        // Too many times with the data when can be done once. Map is better for this. Less work.
         return unique;
     }
 }

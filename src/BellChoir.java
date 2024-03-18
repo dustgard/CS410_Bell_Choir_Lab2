@@ -1,11 +1,12 @@
 import javax.sound.sampled.LineUnavailableException;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
 public class BellChoir {
 
-    public static void main(String[] args) throws LineUnavailableException {
+    public static void main(String[] args) throws LineUnavailableException, IOException {
 
         if (!validateFile(args)) {
             return;
@@ -37,6 +38,12 @@ public class BellChoir {
             format = fileCheck.substring(ext + 1);
         }
         System.out.println("File format provided: [" + format + "]");
-        return format.equals("txt");
+        if (!format.equals("txt")){
+            System.out.println("File format provided is not the correct type: [" + format + "]. Provide txt");
+            return false;
+        }
+        else {
+            return format.equals("txt");
+        }
     }
 }
