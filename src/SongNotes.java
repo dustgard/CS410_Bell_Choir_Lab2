@@ -64,6 +64,10 @@ public class SongNotes {
             }
             for (Note checkNote : Note.values()) {
                 String[] noteSplit = note.split(" ");
+                if(noteSplit.length <2 || noteSplit.length >2){
+                    System.out.println("Too many or few Note parameters");
+                    return false;
+                }
                 if (noteSplit[0].equals(checkNote.toString())) {
                     musicNotes.add(note);
                     goodNoteCount++;
@@ -118,8 +122,9 @@ public class SongNotes {
     public HashSet<String> getUniqueNotes() {
         List<String> members = new ArrayList<>();
         for (String mus : musicNotes) {
-            String mem = mus.substring(0, 1);
-            members.add(mem);
+            String[] mem = mus.split(" ");
+            String noteSplit = mem[0];
+            members.add(noteSplit);
         }
         HashSet<String> unique = new HashSet<>(members);
         // Too many times with the data when can be done once. Map is better for this. Less work.

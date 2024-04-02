@@ -3,6 +3,8 @@ Bell Choir Lab
 Achieved Requirements:
 - The program is able to read a file that is containing a list of Bell Notes
 - The file is validated and is verified when passed to the program.
+- Each ChoirMember plays one Note.
+- The ChoirMember can only play the Note that they are assigned. For example, A
 
 
 Challenges:
