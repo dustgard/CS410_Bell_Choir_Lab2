@@ -11,7 +11,7 @@ public class SongNotes {
         this.songLocation = songLocation[0];
     }
 
-    public void readFile() throws IOException {
+    public boolean validateNotes() throws IOException {
         File songFile = new File(songLocation);
         BufferedReader reader = null;
         try {
@@ -20,6 +20,8 @@ public class SongNotes {
             //Handle the exception
 
         }
+        int noteCount = 0;
+        int goodNoteCount = 0;
         while (true) {
             String note = "";
             try {
@@ -27,18 +29,26 @@ public class SongNotes {
             } catch (IOException ignore) {
             }
             for(Note checkNote : Note.values()){
-                if(note.equals(checkNote)){
+                String[] noteSplit = note.split(" ");
+                if(noteSplit[0].equals(checkNote.toString())){
                     musicNotes.add(note);
+                    goodNoteCount++;
                 }
             }
-
-//            musicNotes.add(note);
+            noteCount++;
         }
         // Use try with resources
         reader.close();
+        if(noteCount!=goodNoteCount){
+            System.out.println("File notes are not correct");
+            return false;
+
+        }
+        System.out.println("True");
+        return true;
     }
 
-    public boolean validateFile(String[] filename) {
+    public boolean validateFile(String[] filename) throws IOException {
 
         if (filename.length > 1) {
             System.out.println("Program only takes one parameter. Example: ant -Dsong=src/Song/MaryLamb.txt run");
@@ -58,6 +68,10 @@ public class SongNotes {
         System.out.println("File format provided: [" + format + "]");
         if (!format.equals("txt")) {
             System.out.println("File format provided is not the correct type: [" + format + "]. Provide txt");
+            return false;
+        }
+
+        if(!validateNotes()){
             return false;
         }
 
@@ -83,4 +97,5 @@ public class SongNotes {
         // Too many times with the data when can be done once. Map is better for this. Less work.
         return unique;
     }
+
 }

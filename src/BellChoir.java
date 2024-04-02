@@ -11,7 +11,6 @@ public class BellChoir {
         if (!notesPassed.validateFile(note)) {
             return;
         }
-        notesPassed.readFile();
         List<String> notes = notesPassed.getMusicNotes();
         HashSet<String> uniqueNotes = notesPassed.getUniqueNotes();
         ChoirConductor conductor = new ChoirConductor(notes, uniqueNotes);
