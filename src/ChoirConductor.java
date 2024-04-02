@@ -8,16 +8,15 @@ public class ChoirConductor implements Runnable {
     public static boolean songStillPlaying = true;
     public static boolean conductorSignal;
     private final Map<String, ChoirMember> choirMembers = new HashMap();
-    private final Queue<BellNote> bellNotes = new LinkedList<>();
     private final Tone tone;
     private final HashSet<String> unique;
-    private final List<String> songChords;
+    private final Queue<BellNote> bellNotes;
     private final SourceDataLine line;
     private final Thread conductor;
 
-    public ChoirConductor(List<String> songLetters, HashSet<String> uniqueNotes) throws LineUnavailableException {
+    public ChoirConductor(Queue<BellNote> songLetters, HashSet<String> uniqueNotes) throws LineUnavailableException {
         unique = uniqueNotes;
-        songChords = songLetters;
+        bellNotes = songLetters;
         final AudioFormat af =
                 new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
         tone = new Tone(af);
@@ -36,26 +35,6 @@ public class ChoirConductor implements Runnable {
     }
 
     public void playSong() {
-        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
-        for (String note : songChords) {
-            String[] split = note.split("\\s+");
-            NoteLength l = null;
-            switch (split[1]) {
-                case "1":
-                    l = NoteLength.WHOLE;
-                    break;
-                case "2":
-                    l = NoteLength.HALF;
-                    break;
-                case "4":
-                    l = NoteLength.QUARTER;
-                    break;
-                case "8":
-                    l = NoteLength.EIGHTH;
-                    break;
-            }
-            bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
-        }
         System.out.println("Starting conductor");
         conductor.start();
     }

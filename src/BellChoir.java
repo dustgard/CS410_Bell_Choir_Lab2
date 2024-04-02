@@ -2,6 +2,7 @@ import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Queue;
 
 public class BellChoir {
 
@@ -11,7 +12,7 @@ public class BellChoir {
         if (!notesPassed.validateFile(note)) {
             return;
         }
-        List<String> notes = notesPassed.getMusicNotes();
+        Queue<BellNote> notes = notesPassed.getMusicNotes();
         HashSet<String> uniqueNotes = notesPassed.getUniqueNotes();
         ChoirConductor conductor = new ChoirConductor(notes, uniqueNotes);
         conductor.assignNotes();

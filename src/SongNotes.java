@@ -1,11 +1,12 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+
 
 public class SongNotes {
     private final String songLocation;
     private final List<String> musicNotes = new ArrayList<>();
+    private final Queue<BellNote> bellNotes = new LinkedList<>();
+    private final List<String> songChords = new ArrayList<>();
 
     public SongNotes(String[] songLocation) {
         this.songLocation = songLocation[0];
@@ -28,9 +29,9 @@ public class SongNotes {
                 if ((note = reader.readLine()) == null) break;
             } catch (IOException ignore) {
             }
-            for(Note checkNote : Note.values()){
+            for (Note checkNote : Note.values()) {
                 String[] noteSplit = note.split(" ");
-                if(noteSplit[0].equals(checkNote.toString())){
+                if (noteSplit[0].equals(checkNote.toString())) {
                     musicNotes.add(note);
                     goodNoteCount++;
                 }
@@ -39,7 +40,7 @@ public class SongNotes {
         }
         // Use try with resources
         reader.close();
-        if(noteCount!=goodNoteCount){
+        if (noteCount != goodNoteCount) {
             System.out.println("File notes are not correct");
             return false;
 
@@ -71,7 +72,11 @@ public class SongNotes {
             return false;
         }
 
-        if(!validateNotes()){
+        if (!validateNotes()) {
+            return false;
+        }
+
+        if (!validateMusicNotes()){
             return false;
         }
 
@@ -83,8 +88,35 @@ public class SongNotes {
 
     // Take String to notes first
     // Tic has validation
-    public List<String> getMusicNotes() {
-        return musicNotes;
+    public Queue<BellNote> getMusicNotes() {
+        return bellNotes;
+    }
+
+    public boolean validateMusicNotes() {
+        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
+        for (String note : musicNotes) {
+            String[] split = note.split("\\s+");
+            NoteLength l = null;
+            switch (split[1]) {
+                case "1":
+                    l = NoteLength.WHOLE;
+                    break;
+                case "2":
+                    l = NoteLength.HALF;
+                    break;
+                case "4":
+                    l = NoteLength.QUARTER;
+                    break;
+                case "8":
+                    l = NoteLength.EIGHTH;
+                    break;
+                default:
+                    System.out.println("Note length wrong");
+                    return false;
+            }
+            bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
+        }
+        return true;
     }
 
     public HashSet<String> getUniqueNotes() {
@@ -97,5 +129,4 @@ public class SongNotes {
         // Too many times with the data when can be done once. Map is better for this. Less work.
         return unique;
     }
-
 }
