@@ -82,12 +82,6 @@ public class SongNotes {
 
     }
 
-    // Take String to notes first
-    // Tic has validation
-    public Queue<BellNote> getMusicNotes() {
-        return bellNotes;
-    }
-
     public boolean validateMusicNotes() {
         bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
         for (String note : musicNotes) {
@@ -113,6 +107,12 @@ public class SongNotes {
             bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
         }
         return true;
+    }
+
+    // Take String to notes first
+    // Tic has validation
+    public Queue<BellNote> getMusicNotes() {
+        return bellNotes;
     }
 
     public HashSet<String> getUniqueNotes() {
