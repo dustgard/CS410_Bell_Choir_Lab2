@@ -11,7 +11,6 @@ public class SongNotes {
     }
 
     public boolean validateFile(String[] filename) throws IOException {
-
         if (filename.length > 1) {
             System.out.println("Program only takes one parameter. Example: ant -Dsong=src/Song/MaryLamb.txt run");
             return false;
@@ -32,17 +31,14 @@ public class SongNotes {
             System.out.println("File format provided is not the correct type: [" + format + "]. Provide txt");
             return false;
         }
-
         if (!validateNotes()) {
             return false;
         }
-
         if (!validateMusicNotes()) {
             return false;
         } else {
             return format.equals("txt");
         }
-
     }
 
     public boolean validateNotes() throws IOException {
@@ -52,7 +48,6 @@ public class SongNotes {
             reader = new BufferedReader(new FileReader(songFile));
         } catch (FileNotFoundException ignore) {
             //Handle the exception
-
         }
         int noteCount = 0;
         int goodNoteCount = 0;
@@ -64,7 +59,7 @@ public class SongNotes {
             }
             for (Note checkNote : Note.values()) {
                 String[] noteSplit = note.split(" ");
-                if(noteSplit.length <2 || noteSplit.length >2){
+                if (noteSplit.length < 2 || noteSplit.length > 2) {
                     System.out.println("Too many or few Note parameters");
                     return false;
                 }
@@ -80,7 +75,6 @@ public class SongNotes {
         if (noteCount != goodNoteCount) {
             System.out.println("File notes are not correct");
             return false;
-
         }
         System.out.println("True");
         return true;
