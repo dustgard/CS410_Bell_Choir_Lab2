@@ -1,12 +1,10 @@
 import java.io.*;
 import java.util.*;
 
-
 public class SongNotes {
     private final String songLocation;
     private final List<String> musicNotes = new ArrayList<>();
     private final Queue<BellNote> bellNotes = new LinkedList<>();
-    private final List<String> songChords = new ArrayList<>();
 
     public SongNotes(String[] songLocation) {
         this.songLocation = songLocation[0];
