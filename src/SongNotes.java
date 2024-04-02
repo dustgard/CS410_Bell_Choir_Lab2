@@ -26,7 +26,13 @@ public class SongNotes {
                 if ((note = reader.readLine()) == null) break;
             } catch (IOException ignore) {
             }
-            musicNotes.add(note);
+            for(Note checkNote : Note.values()){
+                if(note.equals(checkNote)){
+                    musicNotes.add(note);
+                }
+            }
+
+//            musicNotes.add(note);
         }
         // Use try with resources
         reader.close();
@@ -53,9 +59,12 @@ public class SongNotes {
         if (!format.equals("txt")) {
             System.out.println("File format provided is not the correct type: [" + format + "]. Provide txt");
             return false;
-        } else {
+        }
+
+        else {
             return format.equals("txt");
         }
+
     }
 
     // Take String to notes first
