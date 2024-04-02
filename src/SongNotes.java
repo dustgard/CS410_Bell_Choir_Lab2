@@ -10,6 +10,41 @@ public class SongNotes {
         this.songLocation = songLocation[0];
     }
 
+    public boolean validateFile(String[] filename) throws IOException {
+
+        if (filename.length > 1) {
+            System.out.println("Program only takes one parameter. Example: ant -Dsong=src/Song/MaryLamb.txt run");
+            return false;
+        }
+        File file = new File(filename[0]);
+        if (!file.exists()) {
+            System.out.println("File not found: You provided " + filename[0]);
+            return false;
+        }
+        String fileCheck = file.getName();
+        String format = "";
+        int ext = fileCheck.lastIndexOf(".");
+        if (ext >= 0) {
+            format = fileCheck.substring(ext + 1);
+        }
+        System.out.println("File format provided: [" + format + "]");
+        if (!format.equals("txt")) {
+            System.out.println("File format provided is not the correct type: [" + format + "]. Provide txt");
+            return false;
+        }
+
+        if (!validateNotes()) {
+            return false;
+        }
+
+        if (!validateMusicNotes()) {
+            return false;
+        } else {
+            return format.equals("txt");
+        }
+
+    }
+
     public boolean validateNotes() throws IOException {
         File songFile = new File(songLocation);
         BufferedReader reader = null;
@@ -45,41 +80,6 @@ public class SongNotes {
         }
         System.out.println("True");
         return true;
-    }
-
-    public boolean validateFile(String[] filename) throws IOException {
-
-        if (filename.length > 1) {
-            System.out.println("Program only takes one parameter. Example: ant -Dsong=src/Song/MaryLamb.txt run");
-            return false;
-        }
-        File file = new File(filename[0]);
-        if (!file.exists()) {
-            System.out.println("File not found: You provided " + filename[0]);
-            return false;
-        }
-        String fileCheck = file.getName();
-        String format = "";
-        int ext = fileCheck.lastIndexOf(".");
-        if (ext >= 0) {
-            format = fileCheck.substring(ext + 1);
-        }
-        System.out.println("File format provided: [" + format + "]");
-        if (!format.equals("txt")) {
-            System.out.println("File format provided is not the correct type: [" + format + "]. Provide txt");
-            return false;
-        }
-
-        if (!validateNotes()) {
-            return false;
-        }
-
-        if (!validateMusicNotes()) {
-            return false;
-        } else {
-            return format.equals("txt");
-        }
-
     }
 
     public boolean validateMusicNotes() {
