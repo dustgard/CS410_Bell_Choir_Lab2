@@ -76,11 +76,9 @@ public class SongNotes {
             return false;
         }
 
-        if (!validateMusicNotes()){
+        if (!validateMusicNotes()) {
             return false;
-        }
-
-        else {
+        } else {
             return format.equals("txt");
         }
 
