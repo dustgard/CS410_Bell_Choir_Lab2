@@ -1,15 +1,8 @@
-Juice Bottle Lab
+Bell Choir Lab
 
 Achieved Requirements:
--	The program has three Plants (data parallelization)
--	The Plants have 11 workers that only change one state of the orange depending
-        on their job assignment (task parallelization).
--	The final project was committed and pushed up to GitHub via the command line.
--	Documentation with instructions on how to clone and run the program.
--	A UML diagram.
--	Identified critical sections and shared data structures with comments describing what actions were taken.
--   Extra Credit
-    -	Using ANT for building and running the program through the command line.
+- The program is able to read a file that is containing a list of Bell Notes
+- The file is validated and is verified when passed to the program.
 
 
 Challenges:

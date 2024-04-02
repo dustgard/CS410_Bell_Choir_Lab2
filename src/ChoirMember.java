@@ -70,7 +70,6 @@ public class ChoirMember implements Runnable {
                 }
             } while (timeToPlay);
             System.out.println("Member " + Thread.currentThread().getName() + " is finished playing song");
-
         }
     }
 }

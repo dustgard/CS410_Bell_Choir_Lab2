@@ -106,7 +106,6 @@ public class ChoirConductor implements Runnable {
                 }
             } while (songStillPlaying);
             System.out.println("Conductor took a bow");
-
         }
     }
 }

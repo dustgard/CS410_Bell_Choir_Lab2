@@ -18,7 +18,6 @@ public class SongNotes {
             reader = new BufferedReader(new FileReader(songFile));
         } catch (FileNotFoundException ignore) {
             //Handle the exception
-
         }
         while (true) {
             String note = "";
@@ -33,7 +32,6 @@ public class SongNotes {
     }
 
     public boolean validateFile(String[] filename) {
-
         if (filename.length > 1) {
             System.out.println("Program only takes one parameter. Example: ant -Dsong=src/Song/MaryLamb.txt run");
             return false;
