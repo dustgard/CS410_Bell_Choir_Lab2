@@ -7,29 +7,59 @@ public class SongNotes {
     private final String songLocation;
     private final List<String> musicNotes = new ArrayList<>();
 
-    public SongNotes(String songLocation) {
-        this.songLocation = songLocation;
+    public SongNotes(String[] songLocation) {
+        this.songLocation = songLocation[0];
     }
 
-    public void readFile() {
+    public void readFile() throws IOException {
         File songFile = new File(songLocation);
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(songFile));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (FileNotFoundException ignore) {
+            //Handle the exception
+
         }
         while (true) {
-            String note;
+            String note = "";
             try {
                 if ((note = reader.readLine()) == null) break;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (IOException ignore) {
             }
             musicNotes.add(note);
         }
+        // Use try with resources
+        reader.close();
     }
 
+    public boolean validateFile(String[] filename) {
+
+        if (filename.length > 1) {
+            System.out.println("Program only takes one parameter. Example: ant -Dsong=src/Song/MaryLamb.txt run");
+            return false;
+        }
+        File file = new File(filename[0]);
+        if (!file.exists()) {
+            System.out.println("File not found: You provided " + filename[0]);
+            return false;
+        }
+        String fileCheck = file.getName();
+        String format = "";
+        int ext = fileCheck.lastIndexOf(".");
+        if (ext >= 0) {
+            format = fileCheck.substring(ext + 1);
+        }
+        System.out.println("File format provided: [" + format + "]");
+        if (!format.equals("txt")) {
+            System.out.println("File format provided is not the correct type: [" + format + "]. Provide txt");
+            return false;
+        } else {
+            return format.equals("txt");
+        }
+    }
+
+    // Take String to notes first
+    // Tic has validation
     public List<String> getMusicNotes() {
         return musicNotes;
     }
@@ -41,6 +71,7 @@ public class SongNotes {
             members.add(mem);
         }
         HashSet<String> unique = new HashSet<>(members);
+        // Too many times with the data when can be done once. Map is better for this. Less work.
         return unique;
     }
 }

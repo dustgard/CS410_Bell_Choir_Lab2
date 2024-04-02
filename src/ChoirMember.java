@@ -3,8 +3,8 @@ import javax.sound.sampled.SourceDataLine;
 
 public class ChoirMember implements Runnable {
     public final Thread thread;
-    private boolean timeToPlay = true;
     public boolean memberPlayingNote = false;
+    private boolean timeToPlay = true;
     private BellNote bellNote;
     private Tone tone;
     private SourceDataLine line;
@@ -66,7 +66,7 @@ public class ChoirMember implements Runnable {
                 try {
                     play();
                     notify();
-                }  catch (InterruptedException | LineUnavailableException e) {
+                } catch (InterruptedException | LineUnavailableException e) {
                 }
             } while (timeToPlay);
             System.out.println("Member " + Thread.currentThread().getName() + " is finished playing song");
