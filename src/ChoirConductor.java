@@ -129,15 +129,6 @@ public class ChoirConductor implements Runnable {
     public void run() {
         synchronized (this) {
             do {
-                while (!conductorSignal) {
-                    try {
-                        System.out.println(Thread.currentThread().getName() + " is Waiting");
-                        wait();
-                    } catch (InterruptedException e) {
-                        System.err.println(e + "Thread is not the owner to call wait");
-                    }
-                }
-                conductorSignal = false;
                 memberPlayNote();
                 notify();
             } while (songStillPlaying);
