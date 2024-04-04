@@ -90,8 +90,8 @@ public class ChoirMember implements Runnable {
                     } catch (InterruptedException e) {
                     }
                 }
-                    play();
-                    notify();
+                play();
+                notify();
             } while (timeToPlay);
             System.out.println("Member " + Thread.currentThread().getName() + " is finished playing song");
         }
