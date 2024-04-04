@@ -1,6 +1,9 @@
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
+/**
+ *
+ */
 public class ChoirMember implements Runnable {
     public final Thread thread;
     public boolean memberPlayingNote = false;
@@ -9,12 +12,19 @@ public class ChoirMember implements Runnable {
     private Tone tone;
     private SourceDataLine line;
 
+    /**
+     *
+     * @param note
+     */
     ChoirMember(String note) {
         thread = new Thread(this, note);
         thread.start();
     }
 
-    public synchronized void play() throws LineUnavailableException, InterruptedException {
+    /**
+     *
+     */
+    public synchronized void play() {
         if (memberPlayingNote) {
             System.out.println("Member " + Thread.currentThread().getName() + " is Playing note [" + bellNote.note.name() + "]");
             tone.playNote(line, bellNote);
@@ -22,6 +32,12 @@ public class ChoirMember implements Runnable {
         }
     }
 
+    /**
+     *
+     * @param note
+     * @param tone
+     * @param line
+     */
     public synchronized void notesTurn(BellNote note, Tone tone, SourceDataLine line) {
         synchronized (this) {
             this.tone = tone;
@@ -39,6 +55,9 @@ public class ChoirMember implements Runnable {
         }
     }
 
+    /**
+     *
+     */
     public synchronized void memberStop() {
         synchronized (this) {
             timeToPlay = false;
@@ -52,6 +71,9 @@ public class ChoirMember implements Runnable {
         }
     }
 
+    /**
+     *
+     */
     public void run() {
         synchronized (this) {
             do {
@@ -63,11 +85,8 @@ public class ChoirMember implements Runnable {
                     } catch (InterruptedException e) {
                     }
                 }
-                try {
                     play();
                     notify();
-                } catch (InterruptedException | LineUnavailableException e) {
-                }
             } while (timeToPlay);
             System.out.println("Member " + Thread.currentThread().getName() + " is finished playing song");
         }
