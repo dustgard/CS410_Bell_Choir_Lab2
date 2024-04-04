@@ -72,12 +72,6 @@ public class ChoirMember implements Runnable {
         synchronized (this) {
             timeToPlay = false;
             notify();
-            while (timeToPlay) {
-                try {
-                    wait();
-                } catch (InterruptedException ignored) {
-                }
-            }
         }
     }
 
