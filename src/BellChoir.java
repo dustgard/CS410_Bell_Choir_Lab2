@@ -14,7 +14,6 @@ import java.util.Queue;
  * The program simulates a conductor signaling each member that has been assigned a bell representing a note
  * from the file, to play at the appropriate time and length according to the song.
  */
-
 public class BellChoir {
 
     public static void main(String[] args) throws LineUnavailableException, IOException {
