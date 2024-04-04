@@ -14,7 +14,6 @@ import java.util.Queue;
  * Once the ChoirMember is done playing the note, the Conductor then sends the next note to the correct thread
  * depending on the designated ChoirMember assigned BellNote.
  * When the song is finished, the Conductor thread ends.
- * <p>
  * Author: Dustin Gardner
  */
 
