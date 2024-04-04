@@ -34,6 +34,7 @@ public class ChoirConductor implements Runnable {
         for (String notes : unique) {
             ChoirMember choirMember = new ChoirMember(notes);
             choirMembers.put(notes, choirMember);
+            System.out.println(notes);
         }
     }
 
@@ -47,11 +48,12 @@ public class ChoirConductor implements Runnable {
             if (!bellNotes.isEmpty()) {
                 BellNote noteToPlay = bellNotes.poll();
                 if (noteToPlay.note.name().equals("REST")) {
-                    ChoirMember notePlayer = choirMembers.get("A");
+                    ChoirMember notePlayer = choirMembers.get("A5");
                     System.out.println(Thread.currentThread().getName() + ": Sending Member " + notePlayer.thread.getName() + " Note [" + noteToPlay.note.name() + "]");
                     notePlayer.notesTurn(noteToPlay, tone, line);
                 }
-                ChoirMember notePlayer = choirMembers.get(noteToPlay.note.name().substring(0, 1));
+                String[] noteSplit = noteToPlay.note.name().split(" ");
+                ChoirMember notePlayer = choirMembers.get(noteSplit[0]);
                 if (notePlayer != null) {
                     System.out.println(Thread.currentThread().getName() + ": Sending Member " + notePlayer.thread.getName() + " Note [" + noteToPlay.note.name() + "]");
                     notePlayer.notesTurn(noteToPlay, tone, line);

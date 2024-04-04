@@ -3,13 +3,24 @@ Bell Choir Lab
 Achieved Requirements:
 - The program is able to read a file that is containing a list of Bell Notes
 - The file is validated and is verified when passed to the program.
+- Each ChoirMember plays one Note.
+- The ChoirMember can only play the Note that they are assigned. For example, A5.
+- One note is played at a time.
+- Notes are played in order and proper timing according to song passed.
+- The program can read and play various songs with notes hard coding in the original Tone Class.
+- Project is committed and pushed to GitHub.
+- Ant is used to build and run the program.
+- Each ChoirMember assigned a note is a separate thread.
+- The program handles improper song files and notifies user with error messages.
 
 
 Challenges:
-	I found this lab challenging because I had weak knowledge on how to implement
-	multiple threads correctly. I originally tried to have my Plants
-	as threads with them managing multiple workers, which were also threads.
-	I created a new class for the workers but found problems with coordinating
-	the multiple levels of threads within each other. Another challenge I faced
-	was working with synchronizing access to the multiple queues that I
-	created for each process state of the orange.
+	I found this lab challenging because the threads that I created did not play the notes with the
+	correct time for each note.  I had the wait and notify implemented incorrectly, and the threads were trying to
+	wait and notify when they did not own the lock. The instructor provided a TicTacToe program and in the code
+	had a similar wait/notify situation that helped me understand the process better. Internal file validation was
+	additionally challenging, and I did not realize how many checks are needed to ensure proper file setup. It was
+	through trial and error that I was able to cover most of the checks, some from just changing the song to wrong notes
+	on accident. Efficiency is still a hard concept, and I believe the code can still be simply further. I corrected
+	suggested file reading changes because I was doing multiple reads of the file to split the notes up when I could
+	just do it once doing the tasks within one read.
