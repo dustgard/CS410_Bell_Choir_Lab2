@@ -5,6 +5,9 @@ import javax.sound.sampled.SourceDataLine;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ */
 enum NoteLength {
     WHOLE(1.0f),
     HALF(0.5f),
@@ -13,6 +16,10 @@ enum NoteLength {
 
     private final int timeMs;
 
+    /**
+     *
+     * @param length
+     */
     NoteLength(float length) {
         timeMs = (int) (length * Note.MEASURE_LENGTH_SEC * 1000);
     }
@@ -22,6 +29,9 @@ enum NoteLength {
     }
 }
 
+/**
+ *
+ */
 enum Note {
     // REST Must be the first 'Note'
     REST,
@@ -73,7 +83,10 @@ enum Note {
 
     private final byte[] sinSample = new byte[MEASURE_LENGTH_SEC * SAMPLE_RATE];
 
-    private Note() {
+    /**
+     *
+     */
+     Note() {
         int n = this.ordinal();
         if (n > 0) {
             // Calculate the frequency!
@@ -88,42 +101,19 @@ enum Note {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public byte[] sample() {
         return sinSample;
     }
 }
 
+/**
+ *
+ */
 public class Tone {
-
-    // Mary had a little lamb
-    private static final List<BellNote> song = new ArrayList<>() {{
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.F4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.HALF));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.HALF));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.HALF));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.F4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.F4, NoteLength.WHOLE));
-    }};
     private final AudioFormat af;
     private final SourceDataLine line;
     private final Object playLock = new Object();
@@ -131,18 +121,21 @@ public class Tone {
     private Object lock = new Object();
     private boolean notePlaying = false;
 
+    /**
+     *
+     * @param aff
+     * @throws LineUnavailableException
+     */
     Tone(AudioFormat aff) throws LineUnavailableException {
         this.af = aff;
         line = AudioSystem.getSourceDataLine(af);
     }
 
-    public static void main(String[] args) throws Exception {
-        final AudioFormat af =
-                new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
-        Tone t = new Tone(af);
-        t.playSong(song);
-    }
-
+    /**
+     *
+     * @param song
+     * @throws LineUnavailableException
+     */
     void playSong(List<BellNote> song) throws LineUnavailableException {
         try (final SourceDataLine line = AudioSystem.getSourceDataLine(af)) {
             line.open();
@@ -154,6 +147,11 @@ public class Tone {
         }
     }
 
+    /**
+     *
+     * @param line
+     * @param bn
+     */
     public void playNote(SourceDataLine line, BellNote bn) {
         final int ms = Math.min(bn.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
         final int length = Note.SAMPLE_RATE * ms / 1000;
@@ -161,11 +159,18 @@ public class Tone {
         line.write(Note.REST.sample(), 0, Note.SAMPLE_RATE * 50 / 1000);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<BellNote> testReturn() {
         return testList;
     }
 }
 
+/**
+ *
+ */
 class BellNote {
     final Note note;
     final NoteLength length;
