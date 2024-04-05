@@ -138,8 +138,7 @@ public class Tone {
 
 /**
  * This class is used to store the Note and the length that the user wants to play with the text file provided.
- * This
- * class is the bridge between the user's text file passed,
+ * This class is the bridge between the user's text file passed,
  * and the program converting the data into a playable song.
  */
 class BellNote {

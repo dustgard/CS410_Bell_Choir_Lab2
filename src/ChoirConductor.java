@@ -12,7 +12,7 @@ import java.util.Queue;
  * It is responsible for creating a thread for each unique note in the song that is provided by the user.
  * When the Conductor thread starts, it reads the first BellNote and sends it to the ChoirMember to play.
  * Once the ChoirMember is done playing the note, the Conductor then sends the next note to the correct thread
- * depending on the designated ChoirMember assigned BellNote.
+ * depending on the designated ChoirMember's assigned BellNote.
  * When the song is finished, the Conductor thread ends.
  * Author: Dustin Gardner
  */
@@ -30,9 +30,9 @@ public class ChoirConductor implements Runnable {
     /**
      * The constructor takes two parameters that give the necessary information to play the notes and
      * create the required threads.
-     * @param songLetters is are the BellNotes that are needed to play the song.
-     * @param uniqueNotes is used to create a thread based on the unique notes of the song that is played. These are
-     *                    the treads that are going to be playing the notes.
+     * @param songLetters are the BellNotes that are needed to play the song.
+     * @param uniqueNotes is used to create a thread based on the unique notes of the song and
+     *                    are the treads that are going to be playing the notes.
      */
     public ChoirConductor(Queue<BellNote> songLetters, HashSet<String> uniqueNotes) {
         unique = uniqueNotes;
@@ -56,7 +56,7 @@ public class ChoirConductor implements Runnable {
     }
 
     /**
-     * The method takes the unique notes passed to the constructor and created a thread for each one setting the
+     * The method takes the unique notes passed to the constructor and creates a thread for each one by setting the
      * thread name to the notes that they will play.
      * Then prints to the console to inform the user how many threads are going to play notes.
      */
@@ -82,7 +82,7 @@ public class ChoirConductor implements Runnable {
      * This method is used to grab the next note from the bellNotes Queue and tell which ChoirMember to start to play
      * a note based on the parameters passed to them.
      * The method checks to see if there are any notes left to play then sends the correct note using the note name
-     * grabbed to the matching thread name.
+     * and the thread name.
      * The user is informed which note is being passed to what thread.
      * If there is no note left to play the line drains, ChoirMember are told to stop playing and the user is informed
      * the song is finished playing.
@@ -92,12 +92,6 @@ public class ChoirConductor implements Runnable {
         if (songStillPlaying) {
             if (!bellNotes.isEmpty()) {
                 BellNote noteToPlay = bellNotes.poll();
-                // The first note is a REST, and there is no thread named REST, so it is sent to the A5 ChoirMember.
-                if (noteToPlay.note.name().equals("REST")) {
-                    ChoirMember notePlayer = choirMembers.get(choirMembers.keySet().toArray()[0]);
-                    System.out.println(Thread.currentThread().getName() + ": Sending Member " + notePlayer.thread.getName() + " Note [" + noteToPlay.note.name() + "]");
-                    notePlayer.notesTurn(noteToPlay, tone, line);
-                }
                 // Splits the BellNote to then match the note name to the thread name.
                 String[] noteSplit = noteToPlay.note.name().split(" ");
                 ChoirMember notePlayer = choirMembers.get(noteSplit[0]);
