@@ -1,5 +1,3 @@
-import javax.sound.sampled.LineUnavailableException;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Queue;
 
@@ -16,7 +14,7 @@ import java.util.Queue;
  */
 public class BellChoir {
 
-    public static void main(String[] args) throws LineUnavailableException, IOException {
+    public static void main(String[] args) {
         String[] note = args;
         SongNotes notesPassed = new SongNotes(note);
         if (!notesPassed.validateFile(note)) {

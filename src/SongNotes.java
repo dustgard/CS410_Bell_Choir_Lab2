@@ -11,8 +11,8 @@ import java.util.*;
  */
 public class SongNotes {
     private final String songLocation;
-    private final List<String> musicNotes = new ArrayList<>();
     private final Queue<BellNote> bellNotes = new LinkedList<>();
+    private Map<String, Integer> errorList = new HashMap<>();
 
     /**
      * The constructor stores the song location that the user has provided for the song using ant.
@@ -53,11 +53,8 @@ public class SongNotes {
         }
         if (!validateNotes()) {
             return false;
-        }
-        if (!validateNoteLengths()) {
-            return false;
         } else {
-            return format.equals("txt");
+            return true;
         }
     }
 
@@ -67,6 +64,10 @@ public class SongNotes {
      * It then adds the valid notes to the musicNotes List
      * and verifies that the good note count and the total note count is the same.
      * If it is not, then the file contents are accepted.
+     * This method is used to validate the lengths that are associated with the notes in the song.txt file.
+     * It adds the required first note as REST, and then, if the lengths in the song.txt file match the correct format
+     * for the program, it adds the note to the bellNotes queue to be played.
+     * If there is a note that is not in the correct length, it notifies the user that there is a problem.
      * @return true if the count match, which means all the notes were added to the musicNotes List or false if there
      * were any incorrect lines in the song.txt file.
      */
@@ -78,6 +79,7 @@ public class SongNotes {
         } catch (FileNotFoundException ignore) {
             System.err.println(ignore + "File was not found");
         }
+        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
         int noteCount = 0;
         while (true) {
             String note = "";
@@ -85,59 +87,54 @@ public class SongNotes {
                 if ((note = reader.readLine()) == null) break;
             } catch (IOException ignore) {
             }
+            noteCount++;
             String[] split = note.split("\\s+");
+            NoteLength l = null;
+            try {
+                switch (split[1]) {
+                    case "1":
+                        l = NoteLength.WHOLE;
+                        break;
+                    case "2":
+                        l = NoteLength.HALF;
+                        break;
+                    case "3":
+                        l = NoteLength.THIRD;
+                        break;
+                    case "4":
+                        l = NoteLength.QUARTER;
+                        break;
+                    case "8":
+                        l = NoteLength.EIGHTH;
+                        break;
+                    case "16":
+                        l = NoteLength.SIXTEENTH;
+                        break;
+                }
+            } catch (Exception e) {
+                System.err.println("Can not be blank at line " + noteCount);
+                errorList.put(note, noteCount);
+            }
             try {
                 Note.valueOf(split[0]);
+                NoteLength.valueOf(String.valueOf(l));
+                bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
+                if (split.length > 2) {
+                    System.err.println("[" + note + "] is not the correct format to be played at line: " + noteCount);
+                    errorList.put(note, noteCount);
+                }
             } catch (IllegalArgumentException e) {
-                System.err.println("[" + split[0] + "] is not the correct format to be played");
+                System.err.println("[" + note + "] is not the correct format to be played at line: " + noteCount);
+                errorList.put(note, noteCount);
             }
+        }
+        if (!errorList.isEmpty()) {
+            return false;
         }
         // Use try with resources
         try {
             reader.close();
         } catch (IOException ignore) {
-
-        }
-        System.out.println("True");
-        return true;
-    }
-
-    /**
-     * This method is used to validate the lengths that are associated with the notes in the song.txt file.
-     * It adds the required first note as REST, and then, if the lengths in the song.txt file match the correct format
-     * for the program, it adds the note to the bellNotes queue to be played.
-     * If there is a note that is not in the correct length it notifies the user that there is a problem.
-     * @return true if all the notes are the correct length and false if it is not one of the switch cases.
-     */
-    public boolean validateNoteLengths() {
-        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
-        for (String note : musicNotes) {
-            String[] split = note.split("\\s+");
-            NoteLength l;
-            switch (split[1]) {
-                case "1":
-                    l = NoteLength.WHOLE;
-                    break;
-                case "2":
-                    l = NoteLength.HALF;
-                    break;
-                case "3":
-                    l = NoteLength.THIRD;
-                    break;
-                case "4":
-                    l = NoteLength.QUARTER;
-                    break;
-                case "8":
-                    l = NoteLength.EIGHTH;
-                    break;
-                case "16":
-                    l = NoteLength.SIXTEENTH;
-                    break;
-                default:
-                    System.out.println("Note length wrong");
-                    return false;
-            }
-            bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
         }
         return true;
     }
@@ -157,10 +154,8 @@ public class SongNotes {
      */
     public HashSet<String> getUniqueNotes() {
         List<String> members = new ArrayList<>();
-        for (String mus : musicNotes) {
-            String[] mem = mus.split(" ");
-            String noteSplit = mem[0];
-            members.add(noteSplit);
+        for (BellNote mus : bellNotes) {
+            members.add(mus.note.name());
         }
         HashSet<String> unique = new HashSet<>(members);
         return unique;

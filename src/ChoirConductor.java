@@ -61,11 +61,13 @@ public class ChoirConductor implements Runnable {
      * Then prints to the console to inform the user how many threads are going to play notes.
      */
     public void assignNotes() {
+        System.out.print("Members in Bell Choir: ");
         for (String notes : unique) {
             ChoirMember choirMember = new ChoirMember(notes);
             choirMembers.put(notes, choirMember);
-            System.out.println(notes);
+            System.out.print(notes + ", ");
         }
+        System.out.println("");
     }
 
     /**

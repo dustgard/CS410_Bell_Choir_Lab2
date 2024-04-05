@@ -79,7 +79,7 @@ enum Note {
     /**
      * Magic
      */
-     Note() {
+    Note() {
         int n = this.ordinal();
         if (n > 0) {
             // Calculate the frequency!
@@ -95,7 +95,6 @@ enum Note {
     }
 
     /**
-     *
      * @return Magic
      */
     public byte[] sample() {
@@ -107,7 +106,7 @@ enum Note {
  * This class is used to convert the BellNote into audible sound.
  */
 public class Tone {
-    private  AudioFormat af;
+    private AudioFormat af;
     private SourceDataLine line;
 
     /**
@@ -115,12 +114,12 @@ public class Tone {
      * @param aff AudioFormat
      * @throws LineUnavailableException if the line is not created
      */
-    Tone(AudioFormat aff){
+    Tone(AudioFormat aff) {
         this.af = aff;
         try {
             line = AudioSystem.getSourceDataLine(af);
         } catch (LineUnavailableException e) {
-           System.err.println(e + "Can not create line");
+            System.err.println(e + "Can not create line");
         }
     }
 
