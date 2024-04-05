@@ -46,9 +46,9 @@ public class SongNotes {
         }
         String fileCheck = file.getName();
         String format = "";
-        int ext = fileCheck.lastIndexOf(".");
-        if (ext >= 0) {
-            format = fileCheck.substring(ext + 1);
+        int formatExt = fileCheck.lastIndexOf(".");
+        if (formatExt >= 0) {
+            format = fileCheck.substring(formatExt + 1);
         }
         if (!format.equals("txt")) {
             System.err.println("File provided [" + fileCheck + "] in not the correct format type: [" + format + "] Please provide a .txt file");
