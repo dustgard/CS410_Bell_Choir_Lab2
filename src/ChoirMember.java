@@ -59,7 +59,7 @@ public class ChoirMember implements Runnable {
      */
     public synchronized void play() {
         if (memberPlayingNote) {
-            System.out.println("Member " + Thread.currentThread().getName() + " is Playing note [" + bellNote.note.name() + "]");
+            System.out.println("Member " + Thread.currentThread().getName() + " is Playing [" + bellNote.note.name() + " " + bellNote.length.name()+" Note]");
             tone.playNote(line, bellNote);
             memberPlayingNote = false;
         }

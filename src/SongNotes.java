@@ -107,7 +107,6 @@ public class SongNotes {
                             break;
                     }
                 } catch (Exception e) {
-                    errorList.put(note, noteCount);
                 }
                 try  {
                     Note.valueOf(split[0]);
@@ -115,6 +114,7 @@ public class SongNotes {
                         NoteLength.valueOf(String.valueOf(l));
                     } catch (IllegalArgumentException e) {
                         System.err.println("[" + split[1] + "] is not the correct length format to be played at line: " + noteCount);
+                        errorList.put(split[1], noteCount);
                     }
                     bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
                     if (split.length > 2) {
@@ -124,6 +124,7 @@ public class SongNotes {
                 } catch (IllegalArgumentException e) {
                     if(note.equals("")){
                         System.err.println("Can not be blank at line " + noteCount);
+                        errorList.put(note, noteCount);
                     }
                     else {
                         System.err.println("[" + split[0] + "] is not the correct note format to be played at line: " + noteCount);
@@ -131,11 +132,6 @@ public class SongNotes {
                     }
                 }
             }
-//            for(Map.Entry<String, Integer> err : errorList.entrySet()){
-//                String noteErr = err.getKey();
-//                Integer noteCountErr = err.getValue();
-//                System.out.println("Key= " + noteErr + ", Value " + noteCountErr);
-//            }
             if (!errorList.isEmpty()) {
                 return false;
             }
