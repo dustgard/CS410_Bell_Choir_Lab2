@@ -2,76 +2,69 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- *
+ * This is and an enumeration for the length of the notes and their corresponding time.
  */
 enum NoteLength {
     WHOLE(1.0f),
     HALF(0.5f),
+    THIRD(0.33f),
     QUARTER(0.25f),
-    EIGHTH(0.125f);
+    EIGHTH(0.125f),
+    SIXTEENTH(0.065f);
 
     private final int timeMs;
 
     /**
-     *
-     * @param length
+     * This is used to calculate the note length into seconds.
+     * @param length the time for the note to be played.
      */
     NoteLength(float length) {
         timeMs = (int) (length * Note.MEASURE_LENGTH_SEC * 1000);
     }
 
+    /**
+     * Time in milliseconds used to calculate how long to play the notes.
+     * @return timeMs used for calculating the note length.
+     */
     public int timeMs() {
         return timeMs;
     }
 }
 
 /**
- *
+ * Enumeration for what available Notes can be played.
  */
 enum Note {
     // REST Must be the first 'Note'
     REST,
     A4,
-    A4S,
+    B4F,
     B4,
     C4,
     C4S,
     D4,
-    D4S,
+    E4F,
     E4,
     F4,
     F4S,
     G4,
     G4S,
     A5,
-    A5S,
+    B5F,
     B5,
     C5,
-    C5S,
+    D5F,
     D5,
-    D5S,
+    E5F,
     E5,
     F5,
     F5S,
     G5,
-    G5S,
-    A6,
-    A6S,
-    B6,
-    C6,
-    C6S,
-    D6,
-    D6S,
-    E6,
-    F6,
-    F6S,
-    G6,
-    G6S;
+    G5S;
 
+    // Magic
     public static final int SAMPLE_RATE = 48 * 1024; // ~48KHz
     public static final int MEASURE_LENGTH_SEC = 1;
 
@@ -84,7 +77,7 @@ enum Note {
     private final byte[] sinSample = new byte[MEASURE_LENGTH_SEC * SAMPLE_RATE];
 
     /**
-     *
+     * Magic
      */
      Note() {
         int n = this.ordinal();
@@ -103,7 +96,7 @@ enum Note {
 
     /**
      *
-     * @return
+     * @return Magic
      */
     public byte[] sample() {
         return sinSample;
@@ -111,46 +104,30 @@ enum Note {
 }
 
 /**
- *
+ * This class is used to convert the BellNote into audible sound.
  */
 public class Tone {
-    private final AudioFormat af;
-    private final SourceDataLine line;
-    private final Object playLock = new Object();
-    public List<BellNote> testList = new ArrayList<>();
-    private Object lock = new Object();
-    private boolean notePlaying = false;
+    private  AudioFormat af;
+    private SourceDataLine line;
 
     /**
-     *
-     * @param aff
-     * @throws LineUnavailableException
+     * This method sets the AudioFormat that is going to be used and creates the line that music with be played on.
+     * @param aff AudioFormat
+     * @throws LineUnavailableException if the line is not created
      */
-    Tone(AudioFormat aff) throws LineUnavailableException {
+    Tone(AudioFormat aff){
         this.af = aff;
-        line = AudioSystem.getSourceDataLine(af);
-    }
-
-    /**
-     *
-     * @param song
-     * @throws LineUnavailableException
-     */
-    void playSong(List<BellNote> song) throws LineUnavailableException {
-        try (final SourceDataLine line = AudioSystem.getSourceDataLine(af)) {
-            line.open();
-            line.start();
-            for (BellNote bn : song) {
-                playNote(line, bn);
-            }
-            line.drain();
+        try {
+            line = AudioSystem.getSourceDataLine(af);
+        } catch (LineUnavailableException e) {
+           System.err.println(e + "Can not create line");
         }
     }
 
     /**
-     *
-     * @param line
-     * @param bn
+     * This method takes the line that has been created and BellNote. It then writes it to the line to be played.
+     * @param line the line created to send the notes to be played and creates an audible sound.
+     * @param bn   this is the BellNote that is being passed by the ChoirMember to be played.
      */
     public void playNote(SourceDataLine line, BellNote bn) {
         final int ms = Math.min(bn.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
@@ -158,18 +135,13 @@ public class Tone {
         line.write(bn.note.sample(), 0, length);
         line.write(Note.REST.sample(), 0, Note.SAMPLE_RATE * 50 / 1000);
     }
-
-    /**
-     *
-     * @return
-     */
-    public List<BellNote> testReturn() {
-        return testList;
-    }
 }
 
 /**
- *
+ * This class is used to store the Note and the length that the user wants to play with the text file provided.
+ * This
+ * class is the bridge between the user's text file passed,
+ * and the program converting the data into a playable song.
  */
 class BellNote {
     final Note note;

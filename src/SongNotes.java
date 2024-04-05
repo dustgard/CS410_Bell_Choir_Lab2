@@ -133,11 +133,17 @@ public class SongNotes {
                 case "2":
                     l = NoteLength.HALF;
                     break;
+                case "3":
+                    l = NoteLength.THIRD;
+                    break;
                 case "4":
                     l = NoteLength.QUARTER;
                     break;
                 case "8":
                     l = NoteLength.EIGHTH;
+                    break;
+                case "16":
+                    l = NoteLength.SIXTEENTH;
                     break;
                 default:
                     System.out.println("Note length wrong");

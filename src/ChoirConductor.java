@@ -39,11 +39,7 @@ public class ChoirConductor implements Runnable {
         bellNotes = songLetters;
         final AudioFormat af =
                 new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
-        try {
-            tone = new Tone(af);
-        } catch (LineUnavailableException e) {
-            System.err.println(e + "AudioFormat creation failed and can not be passed to Tone");
-        }
+        tone = new Tone(af);
         try {
             line = AudioSystem.getSourceDataLine(af);
         } catch (LineUnavailableException e) {
@@ -96,7 +92,7 @@ public class ChoirConductor implements Runnable {
                 BellNote noteToPlay = bellNotes.poll();
                 // The first note is a REST, and there is no thread named REST, so it is sent to the A5 ChoirMember.
                 if (noteToPlay.note.name().equals("REST")) {
-                    ChoirMember notePlayer = choirMembers.get("A5");
+                    ChoirMember notePlayer = choirMembers.get(choirMembers.keySet().toArray()[0]);
                     System.out.println(Thread.currentThread().getName() + ": Sending Member " + notePlayer.thread.getName() + " Note [" + noteToPlay.note.name() + "]");
                     notePlayer.notesTurn(noteToPlay, tone, line);
                 }
