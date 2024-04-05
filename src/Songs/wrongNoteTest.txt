@@ -9,13 +9,13 @@ G4 4
 G4 4
 G4 2
 A5 4
-A5 4
+A5 4 A4 4 A4 4
 A6 2
 null
-asdfassdf
+asdfassdf ddddd ddddd
+.........................................................................                dddddddddddddddddd
 
-
-A5 4
+A10 2
 G4 1
 F4 4
 G4 4
