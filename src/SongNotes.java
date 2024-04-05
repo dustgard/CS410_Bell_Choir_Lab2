@@ -73,68 +73,74 @@ public class SongNotes {
      */
     public boolean validateNotes() {
         File songFile = new File(songLocation);
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(songFile));
-        } catch (FileNotFoundException ignore) {
-            System.err.println(ignore + "File was not found");
-        }
-        bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
-        int noteCount = 0;
-        while (true) {
-            String note = "";
-            try {
-                if ((note = reader.readLine()) == null) break;
-            } catch (IOException ignore) {
-            }
-            noteCount++;
-            String[] split = note.split("\\s+");
-            NoteLength l = null;
-            try {
-                switch (split[1]) {
-                    case "1":
-                        l = NoteLength.WHOLE;
-                        break;
-                    case "2":
-                        l = NoteLength.HALF;
-                        break;
-                    case "3":
-                        l = NoteLength.THIRD;
-                        break;
-                    case "4":
-                        l = NoteLength.QUARTER;
-                        break;
-                    case "8":
-                        l = NoteLength.EIGHTH;
-                        break;
-                    case "16":
-                        l = NoteLength.SIXTEENTH;
-                        break;
+        try (BufferedReader reader = new BufferedReader(new FileReader(songFile))) {
+            bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
+            int noteCount = 0;
+            while (true) {
+                String note = "";
+                try {
+                    if ((note = reader.readLine()) == null) break;
+                } catch (IOException ignore) {
                 }
-            } catch (Exception e) {
-                System.err.println("Can not be blank at line " + noteCount);
-                errorList.put(note, noteCount);
-            }
-            try {
-                Note.valueOf(split[0]);
-                NoteLength.valueOf(String.valueOf(l));
-                bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
-                if (split.length > 2) {
-                    System.err.println("[" + note + "] is not the correct format to be played at line: " + noteCount);
+                noteCount++;
+                String[] split = note.split("\\s+");
+                NoteLength l = null;
+                try {
+                    switch (split[1]) {
+                        case "1":
+                            l = NoteLength.WHOLE;
+                            break;
+                        case "2":
+                            l = NoteLength.HALF;
+                            break;
+                        case "3":
+                            l = NoteLength.THIRD;
+                            break;
+                        case "4":
+                            l = NoteLength.QUARTER;
+                            break;
+                        case "8":
+                            l = NoteLength.EIGHTH;
+                            break;
+                        case "16":
+                            l = NoteLength.SIXTEENTH;
+                            break;
+                    }
+                } catch (Exception e) {
                     errorList.put(note, noteCount);
                 }
-            } catch (IllegalArgumentException e) {
-                System.err.println("[" + note + "] is not the correct format to be played at line: " + noteCount);
-                errorList.put(note, noteCount);
+                try  {
+                    Note.valueOf(split[0]);
+                    try {
+                        NoteLength.valueOf(String.valueOf(l));
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("[" + split[1] + "] is not the correct length format to be played at line: " + noteCount);
+                    }
+                    bellNotes.add(new BellNote(Note.valueOf(split[0]), l));
+                    if (split.length > 2) {
+                        System.err.println("[" + note + "] is not the correct format to be played at line: " + noteCount);
+                        errorList.put(note, noteCount);
+                    }
+                } catch (IllegalArgumentException e) {
+                    if(note.equals("")){
+                        System.err.println("Can not be blank at line " + noteCount);
+                    }
+                    else {
+                        System.err.println("[" + split[0] + "] is not the correct note format to be played at line: " + noteCount);
+                        errorList.put(note, noteCount);
+                    }
+                }
             }
-        }
-        if (!errorList.isEmpty()) {
-            return false;
-        }
-        // Use try with resources
-        try {
-            reader.close();
-        } catch (IOException ignore) {
+//            for(Map.Entry<String, Integer> err : errorList.entrySet()){
+//                String noteErr = err.getKey();
+//                Integer noteCountErr = err.getValue();
+//                System.out.println("Key= " + noteErr + ", Value " + noteCountErr);
+//            }
+            if (!errorList.isEmpty()) {
+                return false;
+            }
+        } catch (IOException e) {
+            System.err.println(e + "File was not found");
         }
         return true;
     }
