@@ -48,7 +48,7 @@ public class SongNotes {
             format = fileCheck.substring(ext + 1);
         }
         if (!format.equals("txt")) {
-            System.out.println("File provided [" +fileCheck + "] in not the correct format type: [" + format + "] Please provide a .txt file");
+            System.out.println("File provided [" + fileCheck + "] in not the correct format type: [" + format + "] Please provide a .txt file");
             return false;
         }
         if (!validateNotes()) {
@@ -79,35 +79,24 @@ public class SongNotes {
             System.err.println(ignore + "File was not found");
         }
         int noteCount = 0;
-        int goodNoteCount = 0;
         while (true) {
             String note = "";
             try {
                 if ((note = reader.readLine()) == null) break;
             } catch (IOException ignore) {
             }
-            for (Note checkNote : Note.values()) {
-                String[] noteSplit = note.split(" ");
-                if (noteSplit.length < 2 || noteSplit.length > 2) {
-                    System.out.println("Too many or few Note parameters");
-                    return false;
-                }
-                if (noteSplit[0].equals(checkNote.toString())) {
-                    musicNotes.add(note);
-                    goodNoteCount++;
-                }
+            String[] split = note.split("\\s+");
+            try {
+                Note.valueOf(split[0]);
+            } catch (IllegalArgumentException e) {
+                System.err.println("[" + split[0] + "] is not the correct format to be played");
             }
-            noteCount++;
         }
         // Use try with resources
         try {
             reader.close();
         } catch (IOException ignore) {
 
-        }
-        if (noteCount != goodNoteCount) {
-            System.out.println("File notes are not correct");
-            return false;
         }
         System.out.println("True");
         return true;
