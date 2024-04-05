@@ -47,15 +47,14 @@ public class SongNotes {
         if (ext >= 0) {
             format = fileCheck.substring(ext + 1);
         }
-        System.out.println("File format provided: [" + format + "]");
         if (!format.equals("txt")) {
-            System.out.println("File format provided is not the correct type: [" + format + "]. Provide txt");
+            System.out.println("File provided [" +fileCheck + "] in not the correct format type: [" + format + "] Please provide a .txt file");
             return false;
         }
         if (!validateNotes()) {
             return false;
         }
-        if (!validateMusicNotes()) {
+        if (!validateNoteLengths()) {
             return false;
         } else {
             return format.equals("txt");
@@ -121,11 +120,11 @@ public class SongNotes {
      * If there is a note that is not in the correct length it notifies the user that there is a problem.
      * @return true if all the notes are the correct length and false if it is not one of the switch cases.
      */
-    public boolean validateMusicNotes() {
+    public boolean validateNoteLengths() {
         bellNotes.add(new BellNote(Note.REST, NoteLength.QUARTER));
         for (String note : musicNotes) {
             String[] split = note.split("\\s+");
-            NoteLength l = null;
+            NoteLength l;
             switch (split[1]) {
                 case "1":
                     l = NoteLength.WHOLE;
