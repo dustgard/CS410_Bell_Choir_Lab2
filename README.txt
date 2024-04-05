@@ -5,11 +5,11 @@ Dustin Gardner CS-410 4/3/2024
 Bell Choir Lab
 
     The purpose of this lab was to teach that the program does not control the order in which threads run
-    unless designed to do this, but by the OS. The BellChoir Lab is a multithreading program that plays
-    a songs from a file. The file is passed to the program by using ANT from the command line. Once the file is passed
-    in the program, then parse the file into a playable song after validation of the proper
-    file format. The program simulates a conductor signaling each member that has been assigned a bell representing
-    a note from the file, to play at the appropriate time and length according to the song.
+    unless designed to do this. It is usually done by the OS. The BellChoir Lab is a multithreading program that plays
+    a songs from a text file. The file is passed to the program by using ANT from the command line. Once the file is passed
+    to the program, it then parse the file into a playable song after validating the file format.
+    The program simulates a conductor signaling each member that has been assigned a bell note
+    to play at the appropriate time and length according to the song.
 
 Lab Tasks:
 
@@ -22,7 +22,7 @@ Lab Tasks:
 
             1. Project must be committed and pushed to GitHub
             2. Must use ANT to build/run
-            3. Each ChoirMember must play each assigned note in a separate thread
+            3. Each ChoirMember must be each assigned note in a separate thread
             4. The program must be able to play the instructor provided song "Mary Had a Little Lamb" with the sound output
                being properly recognizable with appropriate timing.
             5. The program must play additional songs provided by the instructor or students.
@@ -33,10 +33,10 @@ Bell Choir program design explanation:
 	BellChoir class:
 
         1. Runs the main program.
-        2. Handle the arguments pass to the program for the command line.
-        3. Creates the SongNotes object with the argument as a parameter.
-        4. Creates the ChoirConductor with notes and uniqueNotes returned from the SongNotes class.
-        5. Tells the conductor to assign the unique notes in the song to individual members of the choir.
+        2. Handle the arguments passed to the program from the command line.
+        3. Creates the SongNotes object with the location of the file as a parameter.
+        4. Creates the ChoirConductor with notes and uniqueNotes provided from the SongNotes class.
+        5. It tells the conductor to assign the unique notes in the song to individual members of the choir.
         6. And finally tells the conductor to start playing the song. When the song is over the program ends.
 
     SongNotes class:
