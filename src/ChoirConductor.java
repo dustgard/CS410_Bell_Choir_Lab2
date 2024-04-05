@@ -74,7 +74,7 @@ public class ChoirConductor implements Runnable {
      * Used to start the conductor thread effectively starting the song with the run method.
      */
     public void playSong() {
-        System.out.println("Starting conductor");
+        System.out.println("Conductor starting song");
         conductor.start();
     }
 

@@ -87,7 +87,7 @@ public class ChoirMember implements Runnable {
                         System.out.println("Member " + Thread.currentThread().getName() + " is Waiting");
                         ChoirConductor.conductorSignal = true;
                         wait();
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignore) {
                     }
                 }
                 play();
