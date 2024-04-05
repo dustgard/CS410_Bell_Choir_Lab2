@@ -1,4 +1,7 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -103,7 +106,7 @@ public class SongNotes {
                     }
                 } catch (Exception e) {
                 }
-                try  {
+                try {
                     Note.valueOf(split[0]);
                     try {
                         NoteLength.valueOf(String.valueOf(l));
@@ -117,11 +120,10 @@ public class SongNotes {
                         errorList.put(note, noteCount);
                     }
                 } catch (IllegalArgumentException e) {
-                    if(note.equals("")){
+                    if (note.equals("")) {
                         System.err.println("Can not be blank at line " + noteCount);
                         errorList.put(note, noteCount);
-                    }
-                    else {
+                    } else {
                         System.err.println("[" + split[0] + "] is not the correct note format to be played at line: " + noteCount);
                         errorList.put(note, noteCount);
                     }
